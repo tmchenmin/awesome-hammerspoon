@@ -119,6 +119,7 @@ resizeM:bind('shift', 'O', 'Stretch Rightward', function() resize_win('right') e
 resizeM:bind('shift', 'U', 'Stretch Downward', function() resize_win('down') end, nil, function() resize_win('down') end)
 resizeM:bind('shift', 'I', 'Shrink Upward', function() resize_win('up') end, nil, function() resize_win('up') end)
 resizeM:bind('', 'F', 'Fullscreen', function() resize_win('fullscreen') end, nil, nil)
+resizeM:bind('', 'M', 'Maximize Window', function() resize_win('maximize') end, nil, nil)
 resizeM:bind('', 'C', 'Center Window', function() resize_win('center') end, nil, nil)
 resizeM:bind('shift', 'C', 'Resize & Center', function() resize_win('fcenter') end, nil, nil)
 resizeM:bind('', 'H', 'Lefthalf of Screen', function() resize_win('halfleft') end, nil, nil)
@@ -208,7 +209,7 @@ end
 
 for i = 1, #applist do
     appM:bind('', applist[i].shortcut, applist[i].appname, function()
-        hs.application.launchOrFocus(applist[i].appname)
+        activateApp(applist[i].appname)
         appM:exit()
         if hotkeytext then
             hotkeytext:delete()

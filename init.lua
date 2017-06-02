@@ -1,3 +1,5 @@
+require "preload"
+
 hs.hotkey.alertDuration=0
 hs.hints.showTitleThresh = 0
 hs.window.animationDuration = 0
@@ -20,6 +22,9 @@ black50 = {red=0,blue=0,green=0,alpha=0.5}
 darkblue = {red=24/255,blue=195/255,green=145/255,alpha=1}
 gray = {red=246/255,blue=246/255,green=246/255,alpha=0.3}
 
+mod0 =   {"cmd", "ctrl", "shift"}
+appmod = {"cmd", "ctrl"}
+
 privatepath = hs.fs.pathToAbsolute(hs.configdir..'/private')
 if privatepath == nil then
     hs.fs.mkdir(hs.configdir..'/private')
@@ -29,18 +34,13 @@ if privateconf ~= nil then
     require('private/awesomeconfig')
 end
 
-hsreload_keys = hsreload_keys or {{"cmd", "shift", "ctrl"}, "R"}
+hsreload_keys = hsreload_keys or {mod0, "R"}
 if string.len(hsreload_keys[2]) > 0 then
     hs.hotkey.bind(hsreload_keys[1], hsreload_keys[2], "Reload Configuration", function() hs.reload() end)
 end
 
-lockscreen_keys = lockscreen_keys or {{"cmd", "shift", "ctrl"}, "L"}
-if string.len(lockscreen_keys[2]) > 0 then
-    hs.hotkey.bind(lockscreen_keys[1], lockscreen_keys[2],"Lock Screen", function() hs.caffeinate.lockScreen() end)
-end
-
 if modalmgr == nil then
-    showtime_lkeys = showtime_lkeys or {{"cmd", "shift", "ctrl"}, "T"}
+    showtime_lkeys = showtime_lkeys or {mod0, "T"}
     if string.len(showtime_lkeys[2]) > 0 then
         hs.hotkey.bind(showtime_lkeys[1], showtime_lkeys[2], 'Show Digital Clock', function() show_time() end)
     end
@@ -66,11 +66,6 @@ function show_time()
         time_draw:delete()
         time_draw=nil
     end
-end
-
-showhotkey_keys = showhotkey_keys or {{"cmd", "shift", "ctrl"}, "space"}
-if string.len(showhotkey_keys[2]) > 0 then
-    hs.hotkey.bind(showhotkey_keys[1], showhotkey_keys[2], "Toggle Hotkeys Cheatsheet", function() showavailableHotkey() end)
 end
 
 function showavailableHotkey()
@@ -102,7 +97,7 @@ function showavailableHotkey()
                 table.insert(hotkey_filtered,hotkey_list[i])
             end
         end
-        local availablelen = 70
+        local availablelen = 100
         local hkstr = ''
         for i=2,#hotkey_filtered,2 do
             local tmpstr = hotkey_filtered[i-1].msg .. hotkey_filtered[i].msg
@@ -257,6 +252,9 @@ function resize_win(direction)
             win:setFrame(absolutef)
         end
         if direction == "fullscreen" then
+            win:toggleFullScreen()
+        end
+        if direction == "maximize" then
             localf.x = 0 localf.y = 0 localf.w = max.w localf.h = max.h
             local absolutef = screen:localToAbsolute(localf)
             win:setFrame(absolutef)
@@ -300,29 +298,146 @@ function resize_win(direction)
     end
 end
 
-resizeextra_lefthalf_keys = resizeextra_lefthalf_keys or {{"cmd", "alt"}, "left"}
-if string.len(resizeextra_lefthalf_keys[2]) > 0 then
-    hs.hotkey.bind(resizeextra_lefthalf_keys[1], resizeextra_lefthalf_keys[2], "Lefthalf of Screen", function() resize_win('halfleft') end)
+function highlightActiveWin()
+    local rect = hs.drawing.rectangle(fw():frame())
+    rect:setStrokeColor({["red"]=1,  ["blue"]=0, ["green"]=1, ["alpha"]=1})
+    rect:setStrokeWidth(5)
+    rect:setFill(false)
+    rect:show()
+    hs.timer.doAfter(0.3, function() rect:delete() end)
 end
-resizeextra_righthalf_keys = resizeextra_righthalf_keys or {{"cmd", "alt"}, "right"}
-if string.len(resizeextra_righthalf_keys[2]) > 0 then
-    hs.hotkey.bind(resizeextra_righthalf_keys[1], resizeextra_righthalf_keys[2], "Righthalf of Screen", function() resize_win('halfright') end)
+
+-- Fetch next index but cycle back when at the end
+--
+-- > getNextIndex({1,2,3}, 3)
+-- 1
+-- > getNextIndex({1}, 1)
+-- 1
+-- @return int
+local function getNextIndex(table, currentIndex)
+  nextIndex = currentIndex + 1
+  if nextIndex > #table then
+    nextIndex = 1
+  end
+
+  return nextIndex
 end
-resizeextra_fullscreen_keys = resizeextra_fullscreen_keys or {{"cmd", "alt"}, "up"}
-if string.len(resizeextra_fullscreen_keys[2]) > 0 then
-    hs.hotkey.bind(resizeextra_fullscreen_keys[1], resizeextra_fullscreen_keys[2], "Fullscreen", function() resize_win('fullscreen') end)
+
+local function getNextWindow(windows, window)
+  if type(windows) == "string" then
+    windows = hs.application.find(windows):allWindows()
+  end
+
+  windows = hs.fnutils.filter(windows, hs.window.isStandard)
+  windows = hs.fnutils.filter(windows, hs.window.isVisible)
+
+  -- need to sort by ID, since the default order of the window
+  -- isn't usable when we change the mainWindow
+  -- since mainWindow is always the first of the windows
+  -- hence we would always get the window succeeding mainWindow
+  table.sort(windows, function(w1, w2)
+    return w1:id() > w2:id()
+  end)
+
+  lastIndex = hs.fnutils.indexOf(windows, window)
+  if not lastIndex then return window end
+
+  return windows[getNextIndex(windows, lastIndex)]
 end
-resizeextra_fcenter_keys = resizeextra_fcenter_keys or {{"cmd", "alt"}, "down"}
-if string.len(resizeextra_fcenter_keys[2]) > 0 then
-    hs.hotkey.bind(resizeextra_fcenter_keys[1], resizeextra_fcenter_keys[2], "Resize & Center", function() resize_win('fcenter') end)
+
+-- Needed to enable cycling of application windows
+lastToggledApplication = ''
+
+function launchOrCycleFocus(applicationName)
+  return function()
+    local nextWindow = nil
+    local targetWindow = nil
+    local focusedWindow          = hs.window.focusedWindow()
+    local lastToggledApplication = focusedWindow and focusedWindow:application():name()
+
+    if not focusedWindow then return nil end
+    if lastToggledApplication == applicationName then
+      nextWindow = getNextWindow(applicationName, focusedWindow)
+      -- Becoming main means
+      -- * gain focus (although docs say differently?)
+      -- * next call to launchOrFocus will focus the main window <- important
+      -- * when fetching allWindows() from an application mainWindow will be the first one
+      --
+      -- If we have two applications, each with multiple windows
+      -- i.e:
+      --
+      -- Google Chrome: {window1} {window2}
+      -- Firefox:       {window1} {window2} {window3}
+      --
+      -- and we want to move between Google Chrome {window2} and Firefox {window3}
+      -- when pressing the hotkeys for those applications, then using becomeMain
+      -- we cycle until those windows (i.e press hotkey twice for Chrome) have focus
+      -- and then the launchOrFocus will trigger that specific window.
+      nextWindow:becomeMain()
+      nextWindow:focus()
+    else
+      hs.application.launchOrFocus(applicationName)
+    end
+
+    if nextWindow then
+      targetWindow = nextWindow
+    else
+      targetWindow = hs.window.focusedWindow()
+    end
+
+    if not targetWindow then
+      return nil
+    end
+  end
 end
-resizeextra_center_keys = resizeextra_center_keys or {{"cmd", "alt"}, "return"}
-if string.len(resizeextra_center_keys[2]) > 0 then
-    hs.hotkey.bind(resizeextra_center_keys[1], resizeextra_center_keys[2], "Center Window", function() resize_win('center') end)
+
+function activateApp(appname)
+    launchOrCycleFocus(appname)()
+    local app = hs.application.find(appname)
+    if app then
+        app:activate()
+        hs.timer.doAfter(0.1, highlightActiveWin)
+        app.unhide()
+    end
 end
+
+resize_win_bindings = {
+    { key = {mod0, "left"},  dir = "halfleft", tip = "Lefthalf of Screen" },
+    { key = {mod0, "right"}, dir = "halfright", tip = "Righthalf of Screen" },
+    { key = {mod0, "up"},    dir = "halfup", tip = "Uphalf of Screen" },
+    { key = {mod0, "down"},  dir = "halfdown", tip = "Downhalf of Screen" },
+    { key = {mod0, "C"},     dir = "center", tip = "Center Window" },
+    { key = {mod0, "M"},     dir = "maximize", tip = "Maximize Window" },
+    { key = {mod0, "F"},     dir = "fullscreen", tip = "Fullscreen Window" },
+}
+
+move_win_bindings = {
+    { key = {mod0, "n"}, dir = "next", tip = "Move to next screen" },
+}
+
+applist = {
+    {shortcut = 't', appname = 'iTerm2'},
+    {shortcut = 'c', appname = 'Google Chrome'},
+    {shortcut = 'f', appname = 'Finder'},
+    {shortcut = 'w', appname = '企业微信'},
+    {shortcut = 'm', appname = 'NeteaseMusic'},
+}
+
+hs.fnutils.each(resize_win_bindings, function(item)
+    hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() resize_win(item.dir) end)
+end)
+
+hs.fnutils.each(move_win_bindings, function(item)
+    hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() move_win(item.dir) end)
+end)
+
+hs.fnutils.each(applist, function(item)
+    hs.hotkey.bind(appmod, item.shortcut, item.appname, function() activateApp(item.appname)() end)
+end)
 
 if not module_list then
     module_list = {
+        "widgets/caffeine",
         "widgets/netspeed",
         "widgets/calendar",
         "widgets/hcalendar",
@@ -334,13 +449,13 @@ if not module_list then
         "modes/clipshow",
         "modes/cheatsheet",
         "modes/hsearch",
-        "misc/bingdaily",
+--        "misc/bingdaily",
     }
 end
 
-for i=1,#module_list do
-    require(module_list[i])
-end
+hs.fnutils.each(module_list, function(module)
+    require(module)
+end)
 
 if #modal_list > 0 then require("modalmgr") end
 
@@ -356,3 +471,5 @@ globalScreenWatcher = hs.screen.watcher.newWithActiveScreen(function(activeChang
         if cheatsheet_view then cheatsheet_view:delete() cheatsheet_view = nil end
     end
 end):start()
+
+hs.alert.show("Config Loaded")
