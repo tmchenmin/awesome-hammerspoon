@@ -5,9 +5,9 @@ mincolor = {red=24/255,blue=195/255,green=145/255,alpha=0.75}
 hourcolor = {red=236/255,blue=39/255,green=109/255,alpha=0.75}
 
 if not aclockcenter then
-    local mainScreen = hs.screen.mainScreen()
+    local mainScreen = hs.screen.primaryScreen()
     local mainRes = mainScreen:fullFrame()
-    aclockcenter = {x=mainRes.w-200-20,y=200}
+    aclockcenter = {x=160,y=200}
 end
 
 function showAnalogClock()

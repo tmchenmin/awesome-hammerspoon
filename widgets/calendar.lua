@@ -3,9 +3,9 @@ calcolor = {red=235/255,blue=235/255,green=235/255}
 calbgcolor = {red=0,blue=0,green=0,alpha=0.3}
 
 if not caltopleft then
-    local mainScreen = hs.screen.mainScreen()
+    local mainScreen = hs.screen.primaryScreen()
     local mainRes = mainScreen:fullFrame()
-    caltopleft = {mainRes.w-230-20,mainRes.h-161-44}
+    caltopleft = {mainRes.w-330-20,mainRes.h-161-44}
 end
 
 function drawToday()
