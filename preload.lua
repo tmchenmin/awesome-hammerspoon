@@ -4,12 +4,12 @@ hs.window.animationDuration = 0
 -- auto reload config
 configFileWatcher =
   hs.pathwatcher.new(hs.configdir, function(files)
-                       local isLuaFileChange = utils.some(files, function(p)
-                                                            return utils.contains(utils.split(p, "%p"), "lua")
-                       end)
-                       if isLuaFileChange then
-                         hs.reload()
-                       end
+      local isLuaFileChange = utils.some(files, function(p)
+          return not (string.match(p, "^.+/([^%.#][^/]+%.lua)$") == nil)
+      end)
+      if isLuaFileChange then
+          hs.reload()
+      end
   end):start()
 
 -- persist console history across launches
