@@ -46,6 +46,11 @@ if modalmgr == nil then
     end
 end
 
+showhotkey_keys = showhotkey_keys or {mod0, "space"}
+if string.len(showhotkey_keys[2]) > 0 then
+    hs.hotkey.bind(showhotkey_keys[1], showhotkey_keys[2], "Toggle Hotkeys Cheatsheet", function() showavailableHotkey() end)
+end
+
 function show_time()
     if time_draw == nil then
         local mainScreen = hs.screen.mainScreen()
@@ -419,7 +424,7 @@ applist = {
     {shortcut = 't', appname = 'iTerm2'},
     {shortcut = 'c', appname = 'Google Chrome'},
     {shortcut = 'f', appname = 'Finder'},
-    {shortcut = 'w', appname = '企业微信'},
+    {shortcut = 'w', appname = 'WeWork'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
 }
 
