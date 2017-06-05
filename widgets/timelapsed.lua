@@ -1,4 +1,8 @@
-if not timelapsetopleft then timelapsetopleft = {880,400} end
+if not timelapsetopleft then
+    local mainScreen = hs.screen.primaryScreen()
+    local mainRes = mainScreen:fullFrame()
+    timelapsetopleft = {mainRes.w-280-120, mainRes.h-125-400}
+end
 
 timelapsed_canvas = hs.canvas.new({x=timelapsetopleft[1],y=timelapsetopleft[2],w=280,h=125}):show()
 timelapsed_canvas:behavior(hs.canvas.windowBehaviors.canJoinAllSpaces)
