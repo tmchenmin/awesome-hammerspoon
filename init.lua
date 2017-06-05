@@ -402,7 +402,7 @@ function activateApp(appname)
     if app then
         app:activate()
         hs.timer.doAfter(0.1, highlightActiveWin)
-        app.unhide()
+        app:unhide()
     end
 end
 
@@ -437,7 +437,7 @@ hs.fnutils.each(move_win_bindings, function(item)
 end)
 
 hs.fnutils.each(applist, function(item)
-    hs.hotkey.bind(appmod, item.shortcut, item.appname, function() activateApp(item.appname)() end)
+    hs.hotkey.bind(appmod, item.shortcut, item.appname, function() activateApp(item.appname) end)
 end)
 
 if not module_list then
