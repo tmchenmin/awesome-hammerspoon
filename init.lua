@@ -102,13 +102,13 @@ function showavailableHotkey()
                 table.insert(hotkey_filtered,hotkey_list[i])
             end
         end
-        local availablelen = 110
+        local availablelen = 80
         local hkstr = ''
         for i=2,#hotkey_filtered,2 do
             local tmpstr = hotkey_filtered[i-1].msg .. hotkey_filtered[i].msg
             if string.len(tmpstr)<= availablelen then
                 local tofilllen = availablelen-string.len(hotkey_filtered[i-1].msg)
-                hkstr = hkstr .. string.format('%-50s', hotkey_filtered[i-1].msg) .. string.format('%'..tofilllen..'s',hotkey_filtered[i].msg) .. '\n'
+                hkstr = hkstr .. string.format('%-80s', hotkey_filtered[i-1].msg) .. string.format('%'..tofilllen..'s',hotkey_filtered[i].msg) .. '\n'
             else
                 hkstr = hkstr .. hotkey_filtered[i-1].msg .. '\n' .. hotkey_filtered[i].msg .. '\n'
             end
