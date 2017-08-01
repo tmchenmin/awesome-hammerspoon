@@ -421,11 +421,12 @@ move_win_bindings = {
 }
 
 applist = {
-    {shortcut = 't', appname = 'iTerm2'},
     {shortcut = 'c', appname = 'Google Chrome'},
     {shortcut = 'f', appname = 'Finder'},
-    {shortcut = 'w', appname = 'WeWork'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
+    {shortcut = 'o', appname = 'Microsoft Outlook'},
+    {shortcut = 't', appname = 'iTerm2'},
+    {shortcut = 'w', appname = 'Amazon Chime'},
 }
 
 hs.fnutils.each(resize_win_bindings, function(item)
