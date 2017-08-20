@@ -306,12 +306,14 @@ function resize_win(direction)
 end
 
 function highlightActiveWin()
-    local rect = hs.drawing.rectangle(fw():frame())
-    rect:setStrokeColor({["red"]=1,  ["blue"]=0, ["green"]=1, ["alpha"]=1})
-    rect:setStrokeWidth(5)
-    rect:setFill(false)
-    rect:show()
-    hs.timer.doAfter(0.3, function() rect:delete() end)
+    if fw() then
+        local rect = hs.drawing.rectangle(fw():frame())
+        rect:setStrokeColor({["red"]=1,  ["blue"]=0, ["green"]=1, ["alpha"]=1})
+        rect:setStrokeWidth(5)
+        rect:setFill(false)
+        rect:show()
+        hs.timer.doAfter(0.3, function() rect:delete() end)
+    end
 end
 
 -- Fetch next index but cycle back when at the end
