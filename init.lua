@@ -432,6 +432,7 @@ applist = {
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 't', appname = 'iTerm2'},
     {shortcut = 'w', appname = 'Amazon Chime'},
+    {shortcut = 'x', appname = 'WeChat'},
 }
 
 hs.fnutils.each(resize_win_bindings, function(item)
