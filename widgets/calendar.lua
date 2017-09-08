@@ -5,19 +5,20 @@ calbgcolor = {red=0,blue=0,green=0,alpha=0.3}
 if not caltopleft then
     local mainScreen = hs.screen.primaryScreen()
     local mainRes = mainScreen:fullFrame()
-    caltopleft = {mainRes.w-330-20,mainRes.h-161-44}
+    caltopleft = {mainRes.w-330-20,mainRes.h-161-84}
 end
 
 function drawToday()
     local currentmonth = tonumber(os.date("%m"))
-    local todayyearweek = os.date("%W")
+    -- local todayyearweek = os.date("%W")
+    local todayyearweek = hs.execute("date -v+1d +'%W'")
     -- Year week of last day of last month
-    local ldlmyearweek = hs.execute("date -v"..currentmonth.."m -v1d -v-1d +'%W'")
+    local ldlmyearweek = hs.execute("date -v"..currentmonth.."m -v1d -v+1d +'%W'")
     local rowofcurrentmonth = todayyearweek - ldlmyearweek
     local columnofcurrentmonth = os.date("*t").wday
     local splitw = 205
     local splith = 141
-    local todaycoverrect = hs.geometry.rect(caltopleft[1]+10+splitw/7*(columnofcurrentmonth-1),caltopleft[2]+10+splith/7*(rowofcurrentmonth+1),splitw/7,splith/7)
+    local todaycoverrect = hs.geometry.rect(caltopleft[1]+10+splitw/7*(columnofcurrentmonth-1),caltopleft[2]+10+splith/7*(rowofcurrentmonth+2),splitw/7,splith/7)
     if not todaycover then
         todaycover = hs.drawing.rectangle(todaycoverrect)
         todaycover:setStroke(false)
