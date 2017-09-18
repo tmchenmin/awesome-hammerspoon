@@ -170,12 +170,17 @@ end
 function move_win(direction)
     local win = hs.window.focusedWindow()
     local screen = win:screen()
+    local screens = hs.screen.allScreens()
     if win then
         if direction == 'up' then win:moveOneScreenNorth() end
         if direction == 'down' then win:moveOneScreenSouth() end
         if direction == 'left' then win:moveOneScreenWest() end
         if direction == 'right' then win:moveOneScreenEast() end
         if direction == 'next' then win:moveToScreen(screen:next()) end
+        if direction == 'first' then win:moveToScreen(screens[1]) end
+        if direction == 'second' then win:moveToScreen(screens[2]) end
+        if direction == 'third' then win:moveToScreen(screens[3]) end
+        if direction == 'fourth' then win:moveToScreen(screens[4]) end
     end
 end
 
@@ -422,6 +427,10 @@ resize_win_bindings = {
 
 move_win_bindings = {
     { key = {mod0, "n"}, dir = "next", tip = "Move to next screen" },
+    { key = {mod0, "1"}, dir = "first", tip = "Move to first screen" },
+    { key = {mod0, "2"}, dir = "second", tip = "Move to second screen" },
+    { key = {mod0, "3"}, dir = "third", tip = "Move to third screen" },
+    { key = {mod0, "4"}, dir = "fourth", tip = "Move to fourth screen" },
 }
 
 applist = {
