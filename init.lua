@@ -436,7 +436,7 @@ move_win_bindings = {
 applist = {
     {shortcut = 'c', appname = 'Google Chrome'},
     {shortcut = 'f', appname = 'Finder'},
-    {shortcut = 'j', appname = 'IntelliJ IDEA CE'},
+    {shortcut = 'j', appname = 'IntelliJ IDEA'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 't', appname = 'iTerm2'},
