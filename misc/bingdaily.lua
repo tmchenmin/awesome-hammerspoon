@@ -57,11 +57,10 @@ function setAsWallpaperByShellscript(filepath)
 end
 
 function bingSetAsWallpaper(filepath)
-    if not hs.fs.displayName(desktop_picture_db) then
-        setAsWallpaperByApplescript(filepath)
-    else
+    if hs.fs.displayName(desktop_picture_db) then
         setAsWallpaperByShellscript(filepath)
     end
+    setAsWallpaperByApplescript(filepath)
 end
 
 if bingdaily_timer == nil then
