@@ -5,7 +5,7 @@ Awesome-hammerspoon is my collection of lua scripts for [Hammerspoon](http://www
 ## Get started
 
 1. Install [Hammerspoon](http://www.hammerspoon.org/) first.
-2. `git clone --depth 1 https://github.com/ashfinal/awesome-hammerspoon.git ~/.hammerspoon`
+2. `git clone --depth 1 https://github.com/jeoygin/awesome-hammerspoon.git ~/.hammerspoon`
 3. Reload the configutation.
 
 and you're set.
