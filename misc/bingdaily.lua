@@ -1,5 +1,6 @@
 user_agent_str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4"
 json_req_url = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"
+desktop_picture_db = os.getenv("HOME")..'/Library/Application Support/Dock/desktoppicture.db'
 
 function bingDailyRequest()
     hs.http.asyncGet(json_req_url, {["User-Agent"]=user_agent_str}, function(stat,body,header)
@@ -39,11 +40,27 @@ function downloadBingImage(url)
     bing_curl_task:start()
 end
 
-function bingSetAsWallpaper(filepath)
-    local applescript = 'tell application "System Events"\ntell every desktop\nset picture to "'..filepath..'"\nend tell\nend tell'
-    local stat, data= hs.osascript.applescript(applescript)
+function setAsWallpaperByApplescript(filepath)
+    local applescript = 'tell application "System Events"\nset picture of every desktop to "'..filepath..'"\nend tell'
+    local stat, data = hs.osascript.applescript(applescript)
     if not stat then
         print("AppleScript failed.")
+    end
+end
+
+function setAsWallpaperByShellscript(filepath)
+    local shellscript = "sqlite3 \""..desktop_picture_db.."\" \"update data set value = '"..filepath.."'\" && killall Dock"
+    local outout, status, type, rc = hs.execute(shellscript)
+    if not status then
+        print("ShellScript failed.")
+    end
+end
+
+function bingSetAsWallpaper(filepath)
+    if not hs.fs.displayName(desktop_picture_db) then
+        setAsWallpaperByApplescript(filepath)
+    else
+        setAsWallpaperByShellscript(filepath)
     end
 end
 
