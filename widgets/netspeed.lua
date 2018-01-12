@@ -16,14 +16,14 @@ function data_diff()
         local in_diff = in_seq1 - in_seq2
         local out_diff = out_seq1 - out_seq2
         if in_diff/1024 > 1024 then
-            kbin = string.format("%6.2f",in_diff/1024/1024) .. ' mb/s'
+            kbin = string.format("%6.2f",in_diff/1024/1024) .. ' MB/s'
         else
-            kbin = string.format("%6.2f",in_diff/1024) .. ' kb/s'
+            kbin = string.format("%6.2f",in_diff/1024) .. ' KB/s'
         end
         if out_diff/1024 > 1024 then
-            kbout = string.format("%6.2f",out_diff/1024/1024) .. ' mb/s'
+            kbout = string.format("%6.2f",out_diff/1024/1024) .. ' MB/s'
         else
-            kbout = string.format("%6.2f",out_diff/1024) .. ' kb/s'
+            kbout = string.format("%6.2f",out_diff/1024) .. ' KB/s'
         end
         local disp_str = '⥄ '..kbout..'\n⥂ '..kbin
         if darkmode_status then
