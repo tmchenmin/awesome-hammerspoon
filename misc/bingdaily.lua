@@ -40,7 +40,7 @@ function downloadBingImage(url)
 end
 
 function bingSetAsWallpaper(filepath)
-    local applescript = 'tell application "System Events"\nset picture of current desktop to "'..filepath..'"\nend tell'
+    local applescript = 'tell application "System Events"\ntell every desktop\nset picture to "'..filepath..'"\nend tell\nend tell'
     local stat, data= hs.osascript.applescript(applescript)
     if not stat then
         print("AppleScript failed.")

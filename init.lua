@@ -474,7 +474,7 @@ if not module_list then
         "modes/clipshow",
         "modes/cheatsheet",
         "modes/hsearch",
---        "misc/bingdaily",
+        "misc/bingdaily",
     }
 end
 
