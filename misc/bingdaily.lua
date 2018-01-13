@@ -49,6 +49,13 @@ function setAsWallpaperByApplescript(filepath)
 end
 
 function setAsWallpaperByShellscript(filepath)
+    local query_script = 'sqlite3 "'..desktop_picture_db..'" "select value from data" 2>/dev/null | grep -v "'..hs.fs.displayName(filepath)..'" 2>/dev/null'
+    local to_update, query_status = hs.execute(query_script)
+    if not query_status or string.len(to_update) == 0 then
+        print("No need to set desktop picture by shell script")
+        return
+    end
+
     local shellscript = "sqlite3 \""..desktop_picture_db.."\" \"update data set value = '"..filepath.."'\" && killall Dock"
     local outout, status, type, rc = hs.execute(shellscript)
     if not status then
