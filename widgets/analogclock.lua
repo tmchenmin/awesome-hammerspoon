@@ -16,10 +16,10 @@ function showAnalogClock(screen)
     if not clocks[screen:id()] then
         clocks[screen:id()] = {} 
     end
-    clock = clocks[screen:id()]
+    local clock = clocks[screen:id()]
     clock.screen = screen
     clock.mainRes = screen:fullFrame()
-    clock.localMainRes = screen:absoluteToLocal(hcalendar.mainRes)
+    clock.localMainRes = screen:absoluteToLocal(clock.mainRes)
     if not aclockcenter then
         clock.center = {x=160,y=200}
     else

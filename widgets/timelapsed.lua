@@ -4,7 +4,7 @@ function showTimelapse(screen)
     if not timelapses[screen:id()] then 
         timelapses[screen:id()] = {}
     end
-    timelapse = timelapses[screen:id()]
+    local timelapse = timelapses[screen:id()]
     timelapse.screen = screen
     timelapse.mainRes = screen:fullFrame()
     timelapse.localMainRes = screen:absoluteToLocal(timelapse.mainRes)

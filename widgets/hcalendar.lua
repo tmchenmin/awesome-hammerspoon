@@ -14,18 +14,17 @@ hcalendars = {}
 
 function showHCalendar(screen)
     if not hcalendars[screen:id()] then
-        hcalendar = {}
-        hcalendars[screen:id()] = hcalendar
-        hcalendar.screen = screen
-        hcalendar.mainRes = screen:fullFrame()
-        hcalendar.localMainRes = screen:absoluteToLocal(hcalendar.mainRes)
-        if not hcaltopleft then
-            hcalendar.topleft = {40, hcalendar.localMainRes.h-130-44}
-        else
-            hcalendar.topleft = hcaltopleft
-        end
+        hcalendars[screen:id()] = {}
     end
-    hcalendar = hcalendars[screen:id()]
+    local hcalendar = hcalendars[screen:id()]
+    hcalendar.screen = screen
+    hcalendar.mainRes = screen:fullFrame()
+    hcalendar.localMainRes = screen:absoluteToLocal(hcalendar.mainRes)
+    if not hcaltopleft then
+        hcalendar.topleft = {40, hcalendar.localMainRes.h-130-44}
+    else
+        hcalendar.topleft = hcaltopleft
+    end
     local hcaltopleft = hcalendar.topleft
 
     local titlestr = os.date("%B %Y")

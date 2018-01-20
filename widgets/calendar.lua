@@ -32,12 +32,12 @@ end
 function updateCal(calendar)
     local caltext = hs.styledtext.ansi(hs.execute("cal"),{font={name="Courier",size=16},color=calcolor})
     calendar.caldraw:setStyledText(caltext)
-    drawToday(calendar.caltopleft)
+    drawToday(calendar)
 end
 
 function showCalendar(screen)
     if not calendars[screen:id()] then
-        calendar = {}
+        local calendar = {}
         calendars[screen:id()] = calendar
         calendar.screen = screen
         local mainRes = screen:fullFrame()
