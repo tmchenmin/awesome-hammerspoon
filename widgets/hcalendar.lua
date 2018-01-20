@@ -6,26 +6,38 @@ midlinecolor = {red=1,blue=1,green=1,alpha=0.5}
 midlinetodaycolor = {red=0,blue=1,green=186/255,alpha=0.8}
 midlineoffcolor = {red=1,blue=119/255,green=119/255,alpha=0.5}
 
-if not hcaltopleft then
-    local mainScreen = hs.screen.primaryScreen()
-    local mainRes = mainScreen:fullFrame()
-    hcaltopleft = {40, mainRes.h-130-44}
-end
-
 weeknames = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"}
 hcaltitlewh = {180,32}
 hcaldaywh = {23.43,24}
-function showHCalendar()
+
+hcalendars = {}
+
+function showHCalendar(screen)
+    if not hcalendars[screen:id()] then
+        hcalendar = {}
+        hcalendars[screen:id()] = hcalendar
+        hcalendar.screen = screen
+        hcalendar.mainRes = screen:fullFrame()
+        hcalendar.localMainRes = screen:absoluteToLocal(hcalendar.mainRes)
+        if not hcaltopleft then
+            hcalendar.topleft = {40, hcalendar.localMainRes.h-130-44}
+        else
+            hcalendar.topleft = hcaltopleft
+        end
+    end
+    hcalendar = hcalendars[screen:id()]
+    local hcaltopleft = hcalendar.topleft
+
     local titlestr = os.date("%B %Y")
-    if not hcaltitle then
+    if not hcalendar.title then
         local styledtitle = hs.styledtext.new(titlestr,{font={size=18},color=hcaltitlecolor,paragraphStyle={alignment="left"}})
-        local title_rect = hs.geometry.rect(hcaltopleft[1]+10,hcaltopleft[2]+15,hcaltitlewh[1],hcaltitlewh[2])
-        hcaltitle = hs.drawing.text(title_rect,styledtitle)
-        hcaltitle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hcaltitle:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hcaltitle:show()
+        local title_rect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15,hcaltitlewh[1],hcaltitlewh[2]))
+        hcalendar.title = hs.drawing.text(title_rect,styledtitle)
+        hcalendar.title:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        hcalendar.title:setLevel(hs.drawing.windowLevels.desktopIcon)
+        hcalendar.title:show()
     else
-        hcaltitle:setText(titlestr)
+        hcalendar.title:setText(titlestr)
     end
 
     local currentyear = os.date("%Y")
@@ -45,40 +57,40 @@ function showHCalendar()
         end
     end
     local caltext = weekdayup..'\n'..daydown
-    if not hcaltextdraw then
+    if not hcalendar.textdraw then
         local styledcaltext = hs.styledtext.new(caltext,{font={name="Courier-Bold",size=13},paragraphStyle={lineSpacing=8.0}})
-        local caltextrect = hs.geometry.rect(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1]*maxdayofcurrentmonth,43)
-        hcaltextdraw = hs.drawing.text(caltextrect,styledcaltext)
-        hcaltextdraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hcaltextdraw:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hcaltextdraw:show()
+        local caltextrect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1]*maxdayofcurrentmonth,43))
+        hcalendar.textdraw = hs.drawing.text(caltextrect,styledcaltext)
+        hcalendar.textdraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        hcalendar.textdraw:setLevel(hs.drawing.windowLevels.desktopIcon)
+        hcalendar.textdraw:show()
     else
-        hcaltextdraw:setText(caltext)
+        hcalendar.textdraw:setText(caltext)
     end
 
-    local midlinerect = hs.geometry.rect(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1]*maxdayofcurrentmonth-3,4)
-    if not midlinedraw then
-        midlinedraw = hs.drawing.rectangle(midlinerect)
-        midlinedraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        midlinedraw:setLevel(hs.drawing.windowLevels.desktopIcon)
-        midlinedraw:setFillColor(midlinecolor)
-        midlinedraw:setStroke(false)
-        midlinedraw:show()
+    local midlinerect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1]*maxdayofcurrentmonth-3,4))
+    if not hcalendar.midlinedraw then
+        hcalendar.midlinedraw = hs.drawing.rectangle(midlinerect)
+        hcalendar.midlinedraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        hcalendar.midlinedraw:setLevel(hs.drawing.windowLevels.desktopIcon)
+        hcalendar.midlinedraw:setFillColor(midlinecolor)
+        hcalendar.midlinedraw:setStroke(false)
+        hcalendar.midlinedraw:show()
     else
-        midlinedraw:setFrame(midlinerect)
+        hcalendar.midlinedraw:setFrame(midlinerect)
     end
 
-    local hcalbgrect = hs.geometry.rect(hcaltopleft[1],hcaltopleft[2],hcaldaywh[1]*maxdayofcurrentmonth+20-3,102)
-    if not hcalbg then
-        hcalbg = hs.drawing.rectangle(hcalbgrect)
-        hcalbg:setFillColor(hcalbgcolor)
-        hcalbg:setStroke(false)
-        hcalbg:setRoundedRectRadii(10,10)
-        hcalbg:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hcalbg:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hcalbg:show()
+    local hcalbgrect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1],hcaltopleft[2],hcaldaywh[1]*maxdayofcurrentmonth+20-3,102))
+    if not hcalendar.bg then
+        hcalendar.bg = hs.drawing.rectangle(hcalbgrect)
+        hcalendar.bg:setFillColor(hcalbgcolor)
+        hcalendar.bg:setStroke(false)
+        hcalendar.bg:setRoundedRectRadii(10,10)
+        hcalendar.bg:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        hcalendar.bg:setLevel(hs.drawing.windowLevels.desktopIcon)
+        hcalendar.bg:show()
     else
-        hcalbg:setFrame(hcalbgrect)
+        hcalendar.bg:setFrame(hcalbgrect)
     end
 
     if offday_holder and #offday_holder > 0 then
@@ -107,39 +119,51 @@ function showHCalendar()
     end
 
     local today = math.tointeger(os.date("%d"))
-    local todayrect = hs.geometry.rect(hcaltopleft[1]+10+hcaldaywh[1]*(today-1)-3,hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1],43)
-    if not todaydraw then
-        todaydraw = hs.drawing.rectangle(todayrect)
-        todaydraw:setFillColor(hcaltodaycolor)
-        todaydraw:setStroke(false)
-        todaydraw:setRoundedRectRadii(3,3)
-        todaydraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        todaydraw:setLevel(hs.drawing.windowLevels.desktopIcon)
-        todaydraw:show()
+    local todayrect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10+hcaldaywh[1]*(today-1)-3,hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1],43))
+    if not hcalendar.todaydraw then
+        hcalendar.todaydraw = hs.drawing.rectangle(todayrect)
+        hcalendar.todaydraw:setFillColor(hcaltodaycolor)
+        hcalendar.todaydraw:setStroke(false)
+        hcalendar.todaydraw:setRoundedRectRadii(3,3)
+        hcalendar.todaydraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        hcalendar.todaydraw:setLevel(hs.drawing.windowLevels.desktopIcon)
+        hcalendar.todaydraw:show()
     else
-        todaydraw:setFrame(todayrect)
+        hcalendar.todaydraw:setFrame(todayrect)
     end
 
-    todaymidlinerect = hs.geometry.rect(hcaltopleft[1]+10+hcaldaywh[1]*(today-1)-3,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1],4)
+    todaymidlinerect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10+hcaldaywh[1]*(today-1)-3,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1],4))
     -- Don't know why the draw order is not correct
-    if todaymidlinedraw then
-        todaymidlinedraw:delete()
-        todaymidlinedraw=nil
+    if hcalendar.todaymidlinedraw then
+        hcalendar.todaymidlinedraw:delete()
+        hcalendar.todaymidlinedraw=nil
     end
-    todaymidlinedraw = hs.drawing.rectangle(todaymidlinerect)
-    todaymidlinedraw:setFillColor(midlinetodaycolor)
-    todaymidlinedraw:setStroke(false)
-    todaymidlinedraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-    todaymidlinedraw:setLevel(hs.drawing.windowLevels.desktopIcon)
-    todaymidlinedraw:show()
+    hcalendar.todaymidlinedraw = hs.drawing.rectangle(todaymidlinerect)
+    hcalendar.todaymidlinedraw:setFillColor(midlinetodaycolor)
+    hcalendar.todaymidlinedraw:setStroke(false)
+    hcalendar.todaymidlinedraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+    hcalendar.todaymidlinedraw:setLevel(hs.drawing.windowLevels.desktopIcon)
+    hcalendar.todaymidlinedraw:show()
+end
+
+function showHCalendars()
+    for i=1,#hs.screen.allScreens() do
+        showHCalendar(hs.screen.allScreens()[i])
+    end
 end
 
 if not launch_hcalendar then launch_hcalendar=true end
 if launch_hcalendar == true then
-    showHCalendar()
+    showHCalendars()
     if hcaltimer == nil then
-        hcaltimer = hs.timer.doEvery(1800, function() showHCalendar() end)
+        hcaltimer = hs.timer.doEvery(1800, function() showHCalendars() end)
     else
         hcaltimer:start()
     end
 end
+hcalbgcolor = {red=0,blue=0,green=0,alpha=0.3}
+hcaltitlecolor = {red=1,blue=1,green=1,alpha=0.3}
+offdaycolor = {red=255/255,blue=120/255,green=120/255,alpha=1}
+hcaltodaycolor = {red=1,blue=1,green=1,alpha=0.2}
+midlinecolor = {red=1,blue=1,green=1,alpha=0.5}
+midlinetodaycolor = {red=0,blue=1,green=186/255,alpha=0.8}

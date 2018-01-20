@@ -10,119 +10,135 @@ if not aclockcenter then
     aclockcenter = {x=160,y=200}
 end
 
-function showAnalogClock()
-    if not bgcirle then
-        imagerect = hs.geometry.rect(aclockcenter.x-100,aclockcenter.y-100,200,200)
-        imagedisp = hs.drawing.image(imagerect,hs.fs.pathToAbsolute(hs.configdir..'/resources/watchbg.png'))
-        imagedisp:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        imagedisp:setLevel(hs.drawing.windowLevels.desktopIcon)
-        imagedisp:show()
+clocks = {}
 
-        bgcirle = hs.drawing.arc(aclockcenter,80,0,360)
-        bgcirle:setFill(false)
-        bgcirle:setStrokeWidth(1)
-        bgcirle:setStrokeColor(seccolor)
-        bgcirle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        bgcirle:setLevel(hs.drawing.windowLevels.desktopIcon)
-        bgcirle:show()
+function showAnalogClock(screen)
+    if not clocks[screen:id()] then
+        clocks[screen:id()] = {} 
+    end
+    clock = clocks[screen:id()]
+    clock.screen = screen
+    clock.mainRes = screen:fullFrame()
+    clock.localMainRes = screen:absoluteToLocal(hcalendar.mainRes)
+    if not aclockcenter then
+        clock.center = {x=160,y=200}
+    else
+        clock.center = aclockcenter
+    end
+    local aclockcenter = clock.center
 
-        mincirle = hs.drawing.arc(aclockcenter,55,0,360)
-        mincirle:setFill(false)
-        mincirle:setStrokeWidth(3)
-        mincirle:setStrokeColor(tofilledcolor)
-        mincirle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        mincirle:setLevel(hs.drawing.windowLevels.desktopIcon)
-        mincirle:show()
+    if not clock.bgcirle then
+        imagerect = hs.geometry.rect(screen:localToAbsolute(aclockcenter.x-100,aclockcenter.y-100,200,200))
+        clock.imagedisp = hs.drawing.image(imagerect,hs.fs.pathToAbsolute(hs.configdir..'/resources/watchbg.png'))
+        clock.imagedisp:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.imagedisp:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.imagedisp:show()
 
-        hourcirle = hs.drawing.arc(aclockcenter,40,0,360)
-        hourcirle:setFill(false)
-        hourcirle:setStrokeWidth(3)
-        hourcirle:setStrokeColor(tofilledcolor)
-        hourcirle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hourcirle:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hourcirle:show()
+        clock.bgcirle = hs.drawing.arc(aclockcenter,80,0,360)
+        clock.bgcirle:setFill(false)
+        clock.bgcirle:setStrokeWidth(1)
+        clock.bgcirle:setStrokeColor(seccolor)
+        clock.bgcirle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.bgcirle:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.bgcirle:show()
 
-        sechand = hs.drawing.arc(aclockcenter,80,0,0)
-        sechand:setFillColor(secfillcolor)
-        sechand:setStrokeWidth(1)
-        sechand:setStrokeColor(seccolor)
-        sechand:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        sechand:setLevel(hs.drawing.windowLevels.desktopIcon)
-        sechand:show()
+        clock.mincirle = hs.drawing.arc(aclockcenter,55,0,360)
+        clock.mincirle:setFill(false)
+        clock.mincirle:setStrokeWidth(3)
+        clock.mincirle:setStrokeColor(tofilledcolor)
+        clock.mincirle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.mincirle:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.mincirle:show()
 
-        minhand1 = hs.drawing.arc(aclockcenter,55,0,0)
-        minhand1:setFill(false)
+        clock.hourcirle = hs.drawing.arc(aclockcenter,40,0,360)
+        clock.hourcirle:setFill(false)
+        clock.hourcirle:setStrokeWidth(3)
+        clock.hourcirle:setStrokeColor(tofilledcolor)
+        clock.hourcirle:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.hourcirle:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.hourcirle:show()
+
+        clock.sechand = hs.drawing.arc(aclockcenter,80,0,0)
+        clock.sechand:setFillColor(secfillcolor)
+        clock.sechand:setStrokeWidth(1)
+        clock.sechand:setStrokeColor(seccolor)
+        clock.sechand:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.sechand:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.sechand:show()
+
+        clock.minhand1 = hs.drawing.arc(aclockcenter,55,0,0)
+        clock.minhand1:setFill(false)
         -- minhand:setStrokeWidth(3)
-        minhand1:setStrokeColor(mincolor)
-        minhand1:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        minhand1:setLevel(hs.drawing.windowLevels.desktopIcon)
-        minhand1:show()
-        minhand2 = hs.drawing.arc(aclockcenter,54,0,0)
-        minhand2:setFill(false)
-        minhand2:setStrokeColor(mincolor)
-        minhand2:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        minhand2:setLevel(hs.drawing.windowLevels.desktopIcon)
-        minhand2:show()
-        minhand3 = hs.drawing.arc(aclockcenter,53,0,0)
-        minhand3:setFill(false)
-        minhand3:setStrokeColor(mincolor)
-        minhand3:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        minhand3:setLevel(hs.drawing.windowLevels.desktopIcon)
-        minhand3:show()
+        clock.minhand1:setStrokeColor(mincolor)
+        clock.minhand1:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.minhand1:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.minhand1:show()
+        clock.minhand2 = hs.drawing.arc(aclockcenter,54,0,0)
+        clock.minhand2:setFill(false)
+        clock.minhand2:setStrokeColor(mincolor)
+        clock.minhand2:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.minhand2:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.minhand2:show()
+        clock.minhand3 = hs.drawing.arc(aclockcenter,53,0,0)
+        clock.minhand3:setFill(false)
+        clock.minhand3:setStrokeColor(mincolor)
+        clock.minhand3:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.minhand3:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.minhand3:show()
 
-        hourhand1 = hs.drawing.arc(aclockcenter,40,0,0)
-        hourhand1:setFill(false)
-        hourhand1:setStrokeColor(hourcolor)
-        hourhand1:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hourhand1:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hourhand1:show()
-        hourhand2 = hs.drawing.arc(aclockcenter,39,0,0)
-        hourhand2:setFill(false)
-        hourhand2:setStrokeColor(hourcolor)
-        hourhand2:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hourhand2:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hourhand2:show()
-        hourhand3 = hs.drawing.arc(aclockcenter,38,0,0)
-        hourhand3:setFill(false)
-        hourhand3:setStrokeColor(hourcolor)
-        hourhand3:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
-        hourhand3:setLevel(hs.drawing.windowLevels.desktopIcon)
-        hourhand3:show()
+        clock.hourhand1 = hs.drawing.arc(aclockcenter,40,0,0)
+        clock.hourhand1:setFill(false)
+        clock.hourhand1:setStrokeColor(hourcolor)
+        clock.hourhand1:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.hourhand1:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.hourhand1:show()
+        clock.hourhand2 = hs.drawing.arc(aclockcenter,39,0,0)
+        clock.hourhand2:setFill(false)
+        clock.hourhand2:setStrokeColor(hourcolor)
+        clock.hourhand2:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.hourhand2:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.hourhand2:show()
+        clock.hourhand3 = hs.drawing.arc(aclockcenter,38,0,0)
+        clock.hourhand3:setFill(false)
+        clock.hourhand3:setStrokeColor(hourcolor)
+        clock.hourhand3:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        clock.hourhand3:setLevel(hs.drawing.windowLevels.desktopIcon)
+        clock.hourhand3:show()
 
-        if clocktimer == nil then
-            clocktimer = hs.timer.doEvery(1,function() updateClock() end)
+        if clock.clocktimer == nil then
+            clock.clocktimer = hs.timer.doEvery(1,function() updateClock(clock) end)
         else
-            clocktimer:start()
+            clock.clocktimer:start()
         end
     else
-        clocktimer:stop()
-        clocktimer=nil
-        imagedisp:delete()
-        imagedisp=nil
-        bgcirle:delete()
-        bgcirle=nil
-        mincirle:delete()
-        mincirle=nil
-        hourcirle:delete()
-        hourcirle=nil
-        sechand:delete()
-        sechand=nil
-        minhand1:delete()
-        minhand1=nil
-        minhand2:delete()
-        minhand2=nil
-        minhand3:delete()
-        minhand3=nil
-        hourhand1:delete()
-        hourhand1=nil
-        hourhand2:delete()
-        hourhand2=nil
-        hourhand3:delete()
-        hourhand3=nil
+        clock.clocktimer:stop()
+        clock.clocktimer=nil
+        clock.imagedisp:delete()
+        clock.imagedisp=nil
+        clock.bgcirle:delete()
+        clock.bgcirle=nil
+        clock.mincirle:delete()
+        clock.mincirle=nil
+        clock.hourcirle:delete()
+        clock.hourcirle=nil
+        clock.sechand:delete()
+        clock.sechand=nil
+        clock.minhand1:delete()
+        clock.minhand1=nil
+        clock.minhand2:delete()
+        clock.minhand2=nil
+        clock.minhand3:delete()
+        clock.minhand3=nil
+        clock.hourhand1:delete()
+        clock.hourhand1=nil
+        clock.hourhand2:delete()
+        clock.hourhand2=nil
+        clock.hourhand3:delete()
+        clock.hourhand3=nil
     end
 end
 
-function updateClock()
+function updateClock(clock)
     local secnum = math.tointeger(os.date("%S"))
     local minnum = math.tointeger(os.date("%M"))
     local hournum = math.tointeger(os.date("%I"))
@@ -130,17 +146,23 @@ function updateClock()
     local mineangle = 6*minnum+6/60*secnum
     local houreangle = 30*hournum+30/60*minnum+30/60/60*secnum
 
-    sechand:setArcAngles(0,seceangle)
-    minhand1:setArcAngles(0,mineangle)
-    minhand2:setArcAngles(0,mineangle)
-    minhand3:setArcAngles(0,mineangle)
+    clock.sechand:setArcAngles(0,seceangle)
+    clock.minhand1:setArcAngles(0,mineangle)
+    clock.minhand2:setArcAngles(0,mineangle)
+    clock.minhand3:setArcAngles(0,mineangle)
     if houreangle >= 360 then
         houreangle = houreangle - 360
     end
-    hourhand1:setArcAngles(0,houreangle)
-    hourhand2:setArcAngles(0,houreangle)
-    hourhand3:setArcAngles(0,houreangle)
+    clock.hourhand1:setArcAngles(0,houreangle)
+    clock.hourhand2:setArcAngles(0,houreangle)
+    clock.hourhand3:setArcAngles(0,houreangle)
+end
+
+function showAnalogClocks()
+    for i=1,#hs.screen.allScreens() do
+        showAnalogClock(hs.screen.allScreens()[i])
+    end
 end
 
 if not launch_analogclock then launch_analogclock = true end
-if launch_analogclock == true then showAnalogClock() end
+if launch_analogclock == true then showAnalogClocks() end
