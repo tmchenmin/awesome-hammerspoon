@@ -91,6 +91,11 @@ if string.len(showtime_keys[2]) > 0 then
     modalmgr:bind(showtime_keys[1], showtime_keys[2], 'Show Digital Clock', function() exit_others() show_time() end)
 end
 
+show_screen_numbers_keys = show_screen_numbers_keys or {"", "N"}
+if string.len(show_screen_numbers_keys[2]) > 0 then
+    modalmgr:bind(show_screen_numbers_keys[1], show_screen_numbers_keys[2], 'Show Screen Numbers', function() exit_others() show_screen_numbers() end)
+end
+
 if viewM then
     viewM_keys = viewM_keys or {"", "V"}
     if string.len(viewM_keys[2]) > 0 then

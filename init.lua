@@ -44,6 +44,11 @@ if modalmgr == nil then
     if string.len(showtime_lkeys[2]) > 0 then
         hs.hotkey.bind(showtime_lkeys[1], showtime_lkeys[2], 'Show Digital Clock', function() show_time() end)
     end
+
+    show_screen_numbers_lkeys = show_screen_numbers_lkeys or {mod0, "Q"}
+    if string.len(show_screen_numbers_lkeys[2]) > 0 then
+        hs.hotkey.bind(show_screen_numbers_lkeys[1], show_screen_numbers_lkeys[2], 'Show Screen Numbers', function() show_screen_numbers() end)
+    end
 end
 
 showhotkey_keys = showhotkey_keys or {mod0, "space"}
@@ -51,25 +56,61 @@ if string.len(showhotkey_keys[2]) > 0 then
     hs.hotkey.bind(showhotkey_keys[1], showhotkey_keys[2], "Toggle Hotkeys Cheatsheet", function() showavailableHotkey() end)
 end
 
+times = {}
 function show_time()
-    if time_draw == nil then
-        local mainScreen = hs.screen.mainScreen()
-        local mainRes = mainScreen:fullFrame()
-        local localMainRes = mainScreen:absoluteToLocal(mainRes)
-        local time_str = hs.styledtext.new(os.date("%H:%M"),{font={name="Impact",size=120},color=darkblue,paragraphStyle={alignment="center"}})
-        local timeframe = hs.geometry.rect(mainScreen:localToAbsolute((localMainRes.w-300)/2,(localMainRes.h-200)/2,300,150))
-        time_draw = hs.drawing.text(timeframe,time_str)
-        time_draw:setLevel(hs.drawing.windowLevels.overlay)
-        time_draw:show()
-        if ttimer == nil then
-            ttimer = hs.timer.doAfter(4, function() time_draw:delete() time_draw=nil end)
+    for i=1,#hs.screen.allScreens() do
+        screen = hs.screen.allScreens()[i]
+        if not times[screen:id()] then
+            time = {}
+            times[screen:id()] = time
+            local mainRes = screen:fullFrame()
+            local localMainRes = screen:absoluteToLocal(mainRes)
+            local time_str = hs.styledtext.new(os.date("%H:%M"),{font={name="Impact",size=120},color=darkblue,paragraphStyle={alignment="center"}})
+            local timeframe = hs.geometry.rect(screen:localToAbsolute((localMainRes.w-300)/2,(localMainRes.h-200)/2,300,150))
+            time.draw = hs.drawing.text(timeframe,time_str)
+            time.draw:setLevel(hs.drawing.windowLevels.overlay)
+            time.draw:show()
+            if time.ttimer == nil then
+                time.ttimer = hs.timer.doAfter(4, function() time.draw:delete() time.draw=nil times[screen:id()]=nil end)
+            else
+                time.ttimer:start()
+            end
         else
-            ttimer:start()
+            time = times[screen:id()]
+            time.ttimer:stop()
+            time.draw:delete()
+            time.draw = nil
+            times[screen:id()] = nil
         end
-    else
-        ttimer:stop()
-        time_draw:delete()
-        time_draw=nil
+    end
+end
+
+screen_numbers = {}
+function show_screen_numbers()
+    for i=1,#hs.screen.allScreens() do
+        screen = hs.screen.allScreens()[i]
+        if not screen_numbers[screen:id()] then
+            screen_number = {}
+            screen_numbers[screen:id()] = screen_number
+            local mainRes = screen:fullFrame()
+            local localMainRes = screen:absoluteToLocal(mainRes)
+            local number_str = hs.styledtext.new(i,{font={name="Impact",size=160},color=lawngreen,paragraphStyle={alignment="center"}})
+            local numberframe = hs.geometry.rect(screen:localToAbsolute((localMainRes.w-300)/2,(localMainRes.h-240)/2,300,200))
+            screen_number.draw = hs.drawing.text(numberframe,number_str)
+            screen_number.draw:setLevel(hs.drawing.windowLevels.overlay)
+            screen_number.draw:show()
+            if screen_number.ttimer == nil then
+                screen_number.ttimer = hs.timer.doAfter(4, function() screen_number.draw:delete() screen_number.draw=nil screen_numbers[screen:id()]=nil end)
+            else
+                screen_number.ttimer:start()
+            end
+        else
+            screen_number = screen_numbers[screen:id()]
+            screen_number.ttimer:stop()
+            screen_number.draw:delete()
+            screen_number.draw = nil
+            screen_numbers[screen:id()] = nil
+        end
     end
 end
 
@@ -492,7 +533,12 @@ globalScreenWatcher = hs.screen.watcher.newWithActiveScreen(function(activeChang
         if modal_tray then modal_tray:delete() modal_tray = nil end
         if hotkeytext then hotkeytext:delete() hotkeytext = nil end
         if hotkeybg then hotkeybg:delete() hotkeybg = nil end
-        if time_draw then time_draw:delete() time_draw = nil end
+        for i=1,#times do
+            if times[i] then times[i].draw:delete() times[i].draw = nil times[i] = nil end
+        end
+        for i=1,#screen_numbers do
+            if screen_numbers[i] then screen_numbers[i].draw:delete() screen_numbers[i].draw = nil screen_numbers[i] = nil end
+        end
         if cheatsheet_view then cheatsheet_view:delete() cheatsheet_view = nil end
     end
 end):start()
