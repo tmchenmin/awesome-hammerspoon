@@ -28,24 +28,25 @@ function showHCalendar(screen)
     local hcaltopleft = hcalendar.topleft
 
     local titlestr = os.date("%B %Y")
+    local title_rect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15,hcaltitlewh[1],hcaltitlewh[2]))
     if not hcalendar.title then
         local styledtitle = hs.styledtext.new(titlestr,{font={size=18},color=hcaltitlecolor,paragraphStyle={alignment="left"}})
-        local title_rect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15,hcaltitlewh[1],hcaltitlewh[2]))
         hcalendar.title = hs.drawing.text(title_rect,styledtitle)
         hcalendar.title:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
         hcalendar.title:setLevel(hs.drawing.windowLevels.desktopIcon)
         hcalendar.title:show()
     else
         hcalendar.title:setText(titlestr)
+        hcalendar.title:setFrame(title_rect)
     end
 
     local currentyear = os.date("%Y")
     local currentmonth = os.date("%m")
     local firstdayofnextmonth = os.time{year=currentyear, month=currentmonth+1, day=1}
     local maxdayofcurrentmonth = os.date("*t", firstdayofnextmonth-24*60*60).day
-    weekdayup = ""
-    daydown = ""
-    offday = {}
+    local weekdayup = ""
+    local daydown = ""
+    local offday = {}
     for i=1,maxdayofcurrentmonth do
         local weekdayofquery = os.date("*t", os.time{year=currentyear, month=currentmonth, day=i}).wday
         local weekstr = weeknames[weekdayofquery]
@@ -56,15 +57,16 @@ function showHCalendar(screen)
         end
     end
     local caltext = weekdayup..'\n'..daydown
+    local caltextrect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1]*maxdayofcurrentmonth,43))
     if not hcalendar.textdraw then
         local styledcaltext = hs.styledtext.new(caltext,{font={name="Courier-Bold",size=13},paragraphStyle={lineSpacing=8.0}})
-        local caltextrect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1]*maxdayofcurrentmonth,43))
         hcalendar.textdraw = hs.drawing.text(caltextrect,styledcaltext)
         hcalendar.textdraw:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
         hcalendar.textdraw:setLevel(hs.drawing.windowLevels.desktopIcon)
         hcalendar.textdraw:show()
     else
         hcalendar.textdraw:setText(caltext)
+        hcalendar.textdraw:setFrame(caltextrect)
     end
 
     local midlinerect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1]*maxdayofcurrentmonth-3,4))
@@ -92,15 +94,17 @@ function showHCalendar(screen)
         hcalendar.bg:setFrame(hcalbgrect)
     end
 
-    if offday_holder and #offday_holder > 0 then
-        for i=1,#offday_holder do
-            offday_holder[i]:delete()
-            offdaymidline_holder[i]:delete()
+    if hcalendar.offday_holder and #hcalendar.offday_holder > 0 then
+        for i=1,#hcalendar.offday_holder do
+            hcalendar.offday_holder[i]:delete()
+            hcalendar.offdaymidline_holder[i]:delete()
         end
     end
 
-    offday_holder = {}
-    offdaymidline_holder = {}
+    local offday_holder = {}
+    local offdaymidline_holder = {}
+    hcalendar.offday_holder = offday_holder
+    hcalendar. offdaymidline_holder = offdaymidline_holder
     for i=1,#offday do
         local offdayrect = hs.geometry.rect(hcaltopleft[1]+10+hcaldaywh[1]*(offday[i][1]-1),hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1],43)
         local offdaytext = hs.styledtext.new(offday[i][2],{font={name="Courier-Bold",size=13},color=offdaycolor,paragraphStyle={lineSpacing=8.0}})
@@ -145,9 +149,57 @@ function showHCalendar(screen)
     hcalendar.todaymidlinedraw:show()
 end
 
+function destroyHCalendar(idx)
+    if hcalendars[idx] then
+        local hcalendar = hcalendars[idx]
+        if hs.screen.find(hcalendar.screen:id()) then
+            return
+        end
+        if hcalendar.textdraw then
+            hcalendar.textdraw:delete()
+            hcalendar.textdraw=nil
+        end
+        if hcalendar.midlinedraw then
+            hcalendar.midlinedraw:delete()
+            hcalendar.midlinedraw=nil
+        end
+        if hcalendar.bg then
+            hcalendar.bg:delete()
+            hcalendar.bg=nil
+        end
+        if hcalendar.offday_holder then
+            for i=1,#hcalendar.offday_holder do
+                if hcalendar.offday_holder[i] then
+                    hcalendar.offday_holder[i]:delete()
+                    hcalendar.offday_holder[i]=nil
+                end
+                if hcalendar.offdaymidline_holder[i] then
+                    hcalendar.offdaymidline_holder[i]:delete()
+                    hcalendar.offdaymidline_holder[i]=nil
+                end
+            end
+        end
+        if hcalendar.todaydraw then
+            hcalendar.todaydraw:delete()
+            hcalendar.todaydraw=nil
+        end
+        if hcalendar.todaymidlinedraw then
+            hcalendar.todaymidlinedraw:delete()
+            hcalendar.todaymidlinedraw=nil
+        end
+        hcalendars[idx]=nil
+    end
+end
+
 function showHCalendars()
     for i=1,#hs.screen.allScreens() do
         showHCalendar(hs.screen.allScreens()[i])
+    end
+end
+
+function destroyHCalendars()
+    for i in pairs(hcalendars) do
+        destroyHCalendar(i)
     end
 end
 
@@ -159,10 +211,14 @@ if launch_hcalendar == true then
     else
         hcaltimer:start()
     end
+    hs.screen.watcher.newWithActiveScreen(function(activeChanged)
+        if activeChanged then
+            destroyHCalendars()
+            hs.timer.doAfter(3, function()
+                print('Refresh HCalendar')
+                destroyHCalendars()
+                showHCalendars()
+            end)
+        end
+    end):start()
 end
-hcalbgcolor = {red=0,blue=0,green=0,alpha=0.3}
-hcaltitlecolor = {red=1,blue=1,green=1,alpha=0.3}
-offdaycolor = {red=255/255,blue=120/255,green=120/255,alpha=1}
-hcaltodaycolor = {red=1,blue=1,green=1,alpha=0.2}
-midlinecolor = {red=1,blue=1,green=1,alpha=0.5}
-midlinetodaycolor = {red=0,blue=1,green=186/255,alpha=0.8}

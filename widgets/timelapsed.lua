@@ -16,21 +16,26 @@ function showTimelapse(screen)
     end
     local timelapsetopleft = timelapse.topleft
 
-    local timelapsed_canvas = hs.canvas.new(screen:localToAbsolute({x=timelapsetopleft[1],y=timelapsetopleft[2],w=280,h=125})):show()
-    timelapsed_canvas:behavior(hs.canvas.windowBehaviors.canJoinAllSpaces)
-    timelapsed_canvas:level(hs.canvas.windowLevels.desktopIcon)
-    timelapse.canvas = timelapsed_canvas
+    local canvasrect = hs.geometry.rect(screen:localToAbsolute({x=timelapsetopleft[1],y=timelapsetopleft[2],w=280,h=125}))
+    if not timelapse.canvas then
+        timelapse.canvas = hs.canvas.new(canvasrect)
+        timelapse.canvas:behavior(hs.canvas.windowBehaviors.canJoinAllSpaces)
+        timelapse.canvas:level(hs.canvas.windowLevels.desktopIcon)
+        timelapse.canvas:show()
+    else
+        timelapse.canvas:frame(canvasrect)
+    end
 
     -- canvas background
-    timelapsed_canvas[1] = {
+    timelapse.canvas[1] = {
         action = "fill",
         type = "rectangle",
         fillColor = black,
         roundedRectRadii = {xRadius=5, yRadius=5},
     }
-    timelapsed_canvas[1].fillColor.alpha = .2
+    timelapse.canvas[1].fillColor.alpha = .2
     -- title
-    timelapsed_canvas[2] = {
+    timelapse.canvas[2] = {
         type = "text",
         text = "Time Elapsed",
         textSize = 14,
@@ -42,9 +47,9 @@ function showTimelapse(screen)
             h = tostring(25/125),
         }
     }
-    timelapsed_canvas[2].textColor.alpha = .3
+    timelapse.canvas[2].textColor.alpha = .3
     -- time
-    timelapsed_canvas[3] = {
+    timelapse.canvas[3] = {
         type = "text",
         text = "",
         textColor = {hex="#A6AAC3"},
@@ -58,7 +63,7 @@ function showTimelapse(screen)
         }
     }
     -- indicator background
-    timelapsed_canvas[4] = {
+    timelapse.canvas[4] = {
         type = "image",
         image = hs.image.imageFromPath(hs.fs.pathToAbsolute(hs.configdir..'/resources/timebg.png')),
         frame = {
@@ -69,7 +74,7 @@ function showTimelapse(screen)
         }
     }
     -- light indicator
-    timelapsed_canvas[5] = {
+    timelapse.canvas[5] = {
         action = "fill",
         type = "rectangle",
         fillColor = white,
@@ -80,9 +85,9 @@ function showTimelapse(screen)
             h = tostring(20/125),
         }
     }
-    timelapsed_canvas[5].fillColor.alpha = .2
+    timelapse.canvas[5].fillColor.alpha = .2
     -- indicator mask
-    timelapsed_canvas[6] = {
+    timelapse.canvas[6] = {
         action = "fill",
         type = "rectangle",
         frame = {
@@ -93,7 +98,7 @@ function showTimelapse(screen)
         }
     }
     -- color indicator
-    timelapsed_canvas[7] = {
+    timelapse.canvas[7] = {
         action = "fill",
         type = "rectangle",
         frame = {
@@ -112,13 +117,31 @@ function showTimelapse(screen)
             {hex = "#E04E4E"},
         },
     }
-    timelapsed_canvas[7].compositeRule = "sourceAtop"
+    timelapse.canvas[7].compositeRule = "sourceAtop"
 
     if timelapse.elapsedTimer == nil then
         timelapse.elapsedTimer = hs.timer.doEvery(1, function() updateElapsedCanvas(timelapse) end)
     else
         timelapse.elapsedTimer:start()
     end
+end
+
+function destroyTimelapse(idx)
+   if timelapses[idx] then
+       local timelapse = timelapses[idx]
+       if hs.screen.find(timelapse.screen:id()) then
+           return
+       end
+       if timelapse.elapsedTimer then
+           timelapse.elapsedTimer:stop()
+           timelapse.elapsedTimer=nil
+       end
+       if timelapse.canvas then
+           timelapse.canvas:delete()
+           timelapse.canvas=nil
+       end
+       timelapses[idx]=nil
+   end
 end
 
 function updateElapsedCanvas(timelapse)
@@ -139,9 +162,31 @@ function updateElapsedCanvas(timelapse)
        timelapse.canvas[3].text = timestr
        timelapse.canvas[6].frame.w = tostring(240/280*elapsed_percent)
    end
-
 end
 
-for i=1,#hs.screen.allScreens() do
-    showTimelapse(hs.screen.allScreens()[i])
+function showTimelapses()
+    for i=1,#hs.screen.allScreens() do
+        showTimelapse(hs.screen.allScreens()[i])
+    end
 end
+
+function destroyTimelapses()
+    for i in pairs(timelapses) do
+        destroyTimelapse(i)
+    end
+end
+
+if not launch_timelapse then launch_timelapse = true end
+if launch_timelapse == true then
+    showTimelapses()
+    hs.screen.watcher.newWithActiveScreen(function(activeChanged)
+        if activeChanged then
+            destroyTimelapses()
+            hs.timer.doAfter(3, function()
+                print('Refresh Timelapse')
+                showTimelapses()
+            end)
+        end
+    end):start()
+end
+
