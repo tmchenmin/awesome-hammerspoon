@@ -63,7 +63,7 @@ function showCalendar(screen)
         calendar.calbg:setFrame(bgrect)
     end
 
-    local caltext = hs.styledtext.ansi(hs.execute("cal -h"),{font={name="Courier",size=16},color=calcolor})
+    local caltext = hs.styledtext.ansi(hs.execute("cal | tr -d '_'"),{font={name="Courier",size=16},color=calcolor})
     local calrect = hs.geometry.rect(screen:localToAbsolute(calendar.caltopleft[1]+15,calendar.caltopleft[2]+10,230,161))
     if not calendar.caldraw then
         calendar.caldraw = hs.drawing.text(calrect,caltext)
