@@ -57,11 +57,23 @@ if string.len(showhotkey_keys[2]) > 0 then
 end
 
 times = {}
+
+function destroy_time(idx)
+    local time = times[idx]
+    if time then
+        if time.draw then
+            time.draw:delete()
+            time.draw = nil
+        end
+        times[idx] = nil
+    end
+end
+
 function show_time()
     for i=1,#hs.screen.allScreens() do
-        screen = hs.screen.allScreens()[i]
+        local screen = hs.screen.allScreens()[i]
         if not times[screen:id()] then
-            time = {}
+            local time = {}
             times[screen:id()] = time
             local mainRes = screen:fullFrame()
             local localMainRes = screen:absoluteToLocal(mainRes)
@@ -71,24 +83,36 @@ function show_time()
             time.draw:setLevel(hs.drawing.windowLevels.overlay)
             time.draw:show()
             if time.ttimer == nil then
-                time.ttimer = hs.timer.doAfter(4, function() time.draw:delete() time.draw=nil times[screen:id()]=nil end)
+                time.ttimer = hs.timer.doAfter(1, function() destroy_time(screen:id()) end)
             else
                 time.ttimer:start()
             end
         else
-            time = times[screen:id()]
-            time.ttimer:stop()
-            time.draw:delete()
-            time.draw = nil
-            times[screen:id()] = nil
+            local time = times[screen:id()]
+            if time.ttimer then
+                time.ttimer:stop()
+            end
+            destroy_time(screen:id())
         end
     end
 end
 
 screen_numbers = {}
+
+function destroy_screen_number(idx)
+    local screen_number = screen_numbers[idx]
+    if screen_number then
+        if screen_number.draw then
+            screen_number.draw:delete()
+            screen_number.draw = nil
+        end
+        screen_numbers[idx] = nil
+    end
+end
+
 function show_screen_numbers()
     for i=1,#hs.screen.allScreens() do
-        screen = hs.screen.allScreens()[i]
+        local screen = hs.screen.allScreens()[i]
         if not screen_numbers[screen:id()] then
             screen_number = {}
             screen_numbers[screen:id()] = screen_number
@@ -100,16 +124,16 @@ function show_screen_numbers()
             screen_number.draw:setLevel(hs.drawing.windowLevels.overlay)
             screen_number.draw:show()
             if screen_number.ttimer == nil then
-                screen_number.ttimer = hs.timer.doAfter(4, function() screen_number.draw:delete() screen_number.draw=nil screen_numbers[screen:id()]=nil end)
+                screen_number.ttimer = hs.timer.doAfter(1, function() destroy_screen_number(screen:id()) end)
             else
                 screen_number.ttimer:start()
             end
         else
             screen_number = screen_numbers[screen:id()]
-            screen_number.ttimer:stop()
-            screen_number.draw:delete()
-            screen_number.draw = nil
-            screen_numbers[screen:id()] = nil
+            if screen_number.ttimer then
+                screen_number.ttimer:stop()
+            end
+            destroy_screen_number(screen:id())
         end
     end
 end
@@ -533,11 +557,10 @@ globalScreenWatcher = hs.screen.watcher.newWithActiveScreen(function(activeChang
         if modal_tray then modal_tray:delete() modal_tray = nil end
         if hotkeytext then hotkeytext:delete() hotkeytext = nil end
         if hotkeybg then hotkeybg:delete() hotkeybg = nil end
-        for i=1,#times do
-            if times[i] then times[i].draw:delete() times[i].draw = nil times[i] = nil end
-        end
-        for i=1,#screen_numbers do
-            if screen_numbers[i] then screen_numbers[i].draw:delete() screen_numbers[i].draw = nil screen_numbers[i] = nil end
+        for i=1,#hs.screen.allScreens() do
+            local screen = hs.screen.allScreens()[i]
+            destroy_time(screen:id())
+            desdestroy_screen_number(screen:id())
         end
         if cheatsheet_view then cheatsheet_view:delete() cheatsheet_view = nil end
     end
