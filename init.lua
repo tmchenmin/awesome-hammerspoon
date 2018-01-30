@@ -560,7 +560,7 @@ globalScreenWatcher = hs.screen.watcher.newWithActiveScreen(function(activeChang
         for i=1,#hs.screen.allScreens() do
             local screen = hs.screen.allScreens()[i]
             destroy_time(screen:id())
-            desdestroy_screen_number(screen:id())
+            destroy_screen_number(screen:id())
         end
         if cheatsheet_view then cheatsheet_view:delete() cheatsheet_view = nil end
     end
