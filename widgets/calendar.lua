@@ -101,9 +101,7 @@ function destroyCalendar(idx)
 end
 
 function showCalendars()
-    for i=1,#hs.screen.allScreens() do
-        showCalendar(hs.screen.allScreens()[i])
-    end
+    showCalendar(hs.screen.primaryScreen())
 end
 
 function destroyCalendars()

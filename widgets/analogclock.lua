@@ -239,9 +239,7 @@ function updateClock(clock)
 end
 
 function showAnalogClocks()
-    for i=1,#hs.screen.allScreens() do
-        showAnalogClock(hs.screen.allScreens()[i])
-    end
+    showAnalogClock(hs.screen.primaryScreen())
 end
 
 function destroyAnalogClocks()

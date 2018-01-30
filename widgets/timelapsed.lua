@@ -165,9 +165,7 @@ function updateElapsedCanvas(timelapse)
 end
 
 function showTimelapses()
-    for i=1,#hs.screen.allScreens() do
-        showTimelapse(hs.screen.allScreens()[i])
-    end
+    showTimelapse(hs.screen.primaryScreen())
 end
 
 function destroyTimelapses()
