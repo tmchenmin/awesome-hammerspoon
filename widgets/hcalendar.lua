@@ -106,13 +106,13 @@ function showHCalendar(screen)
     hcalendar.offday_holder = offday_holder
     hcalendar. offdaymidline_holder = offdaymidline_holder
     for i=1,#offday do
-        local offdayrect = hs.geometry.rect(hcaltopleft[1]+10+hcaldaywh[1]*(offday[i][1]-1),hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1],43)
+        local offdayrect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10+hcaldaywh[1]*(offday[i][1]-1),hcaltopleft[2]+15+hcaltitlewh[2],hcaldaywh[1],43))
         local offdaytext = hs.styledtext.new(offday[i][2],{font={name="Courier-Bold",size=13},color=offdaycolor,paragraphStyle={lineSpacing=8.0}})
         table.insert(offday_holder,hs.drawing.text(offdayrect,offdaytext))
         offday_holder[i]:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
         offday_holder[i]:setLevel(hs.drawing.windowLevels.desktopIcon)
         offday_holder[i]:show()
-        local offdaymidlinerect = hs.geometry.rect(hcaltopleft[1]+10+hcaldaywh[1]*(offday[i][1]-1)-3,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1],4)
+        local offdaymidlinerect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10+hcaldaywh[1]*(offday[i][1]-1)-3,hcaltopleft[2]+15+hcaltitlewh[2]+20,hcaldaywh[1],4))
         table.insert(offdaymidline_holder,hs.drawing.rectangle(offdaymidlinerect))
         offdaymidline_holder[i]:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
         offdaymidline_holder[i]:setLevel(hs.drawing.windowLevels.desktopIcon)
@@ -154,6 +154,10 @@ function destroyHCalendar(idx)
         local hcalendar = hcalendars[idx]
         if hs.screen.find(hcalendar.screen:id()) then
             return
+        end
+        if hcalendar.title then
+            hcalendr.title:delete()
+            hcalendar.title=nil
         end
         if hcalendar.textdraw then
             hcalendar.textdraw:delete()
@@ -216,7 +220,6 @@ if launch_hcalendar == true then
             destroyHCalendars()
             hs.timer.doAfter(3, function()
                 print('Refresh HCalendar')
-                destroyHCalendars()
                 showHCalendars()
             end)
         end
