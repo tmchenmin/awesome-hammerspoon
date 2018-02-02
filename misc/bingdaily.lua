@@ -1,6 +1,7 @@
 user_agent_str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4"
 json_req_url = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"
 desktop_picture_db = os.getenv("HOME")..'/Library/Application Support/Dock/desktoppicture.db'
+bing_image_dir = os.getenv("HOME").."/Library/Caches/org.hammerspoon.Hammerspoon/images/"
 
 function bingDailyRequest()
     hs.http.asyncGet(json_req_url, {["User-Agent"]=user_agent_str}, function(stat,body,header)
@@ -25,7 +26,7 @@ function downloadBingImage(url)
         if exitCode == 0 then
             bing_curl_task = nil
             bing_last_set_pic = hs.http.urlParts(url).lastPathComponent
-            local localpath = os.getenv("HOME").."/.Trash/"..hs.http.urlParts(url).lastPathComponent
+            local localpath = bing_image_dir..hs.http.urlParts(url).lastPathComponent
             bingSetAsWallpaper(localpath)
         else
             print(stdOut,stdErr)
@@ -35,7 +36,12 @@ function downloadBingImage(url)
         bing_curl_task:terminate()
         bing_curl_task = nil
     end
-    local localpath = os.getenv("HOME").."/.Trash/"..hs.http.urlParts(url).lastPathComponent
+    local localpath = bing_image_dir..hs.http.urlParts(url).lastPathComponent
+    local mkdir_output, mkdir_status = os.execute("mkdir -p "..bing_image_dir)
+    if not mkdir_status then
+        print("Failed to create directory: "..bing_image_dir)
+        return
+    end
     bing_curl_task = hs.task.new("/usr/bin/curl",curl_callback,{"-A",user_agent_str,url,"-o",localpath})
     bing_curl_task:start()
 end
