@@ -27,7 +27,7 @@ function showHCalendar(screen)
     end
     local hcaltopleft = hcalendar.topleft
 
-    local titlestr = os.date("%B %Y")
+    local titlestr = os.date("%B %Y, Week %W")
     local title_rect = hs.geometry.rect(screen:localToAbsolute(hcaltopleft[1]+10,hcaltopleft[2]+15,hcaltitlewh[1],hcaltitlewh[2]))
     if not hcalendar.title then
         local styledtitle = hs.styledtext.new(titlestr,{font={size=18},color=hcaltitlecolor,paragraphStyle={alignment="left"}})
