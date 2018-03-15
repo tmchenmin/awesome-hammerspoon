@@ -1,6 +1,7 @@
 caltodaycolor = hs.drawing.color.white
 calcolor = {red=235/255,blue=235/255,green=235/255}
 calbgcolor = {red=0,blue=0,green=0,alpha=0.3}
+calcmd='cal -h 2>/dev/null || cal'
 
 calendars = {}
 
@@ -30,7 +31,7 @@ function drawToday(calendar)
 end
 
 function updateCal(calendar)
-    local caltext = hs.styledtext.ansi(hs.execute("cal"),{font={name="Courier",size=16},color=calcolor})
+    local caltext = hs.styledtext.ansi(hs.execute(calcmd),{font={name="Courier",size=16},color=calcolor})
     calendar.caldraw:setStyledText(caltext)
     drawToday(calendar)
 end
@@ -63,7 +64,7 @@ function showCalendar(screen)
         calendar.calbg:setFrame(bgrect)
     end
 
-    local caltext = hs.styledtext.ansi(hs.execute("cal | tr -d '_'"),{font={name="Courier",size=16},color=calcolor})
+    local caltext = hs.styledtext.ansi(hs.execute(calcmd),{font={name="Courier",size=16},color=calcolor})
     local calrect = hs.geometry.rect(screen:localToAbsolute(calendar.caltopleft[1]+15,calendar.caltopleft[2]+10,230,161))
     if not calendar.caldraw then
         calendar.caldraw = hs.drawing.text(calrect,caltext)
