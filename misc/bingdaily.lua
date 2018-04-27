@@ -28,6 +28,7 @@ function downloadBingImage(url)
             bing_last_set_pic = hs.http.urlParts(url).lastPathComponent
             local localpath = bing_image_dir..hs.http.urlParts(url).lastPathComponent
             bingSetAsWallpaper(localpath)
+            os.execute("ls -t "..bing_image_dir.." | tail -n+30 | xargs -I{} rm -f "..bing_image_dir.."/{}")
         else
             print(stdOut,stdErr)
         end
