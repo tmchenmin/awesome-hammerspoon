@@ -504,12 +504,15 @@ move_win_bindings = {
 
 applist = {
     {shortcut = 'c', appname = 'Google Chrome'},
+    {shortcut = 'e', appname = 'Microsoft Excel'},
     {shortcut = 'f', appname = 'Finder'},
+    {shortcut = 'i', appname = 'Amazon Chime'},
     {shortcut = 'j', appname = 'IntelliJ IDEA'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
+    {shortcut = 'p', appname = 'Microsoft PowerPoint'},
     {shortcut = 't', appname = 'iTerm2'},
-    {shortcut = 'w', appname = 'Amazon Chime'},
+    {shortcut = 'w', appname = 'Microsoft Word'},
     {shortcut = 'x', appname = 'WeChat'},
 }
 
