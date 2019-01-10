@@ -511,6 +511,7 @@ applist = {
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
+    {shortcut = 'r', appname = 'Firefox'},
     {shortcut = 't', appname = 'iTerm2'},
     {shortcut = 'w', appname = 'Microsoft Word'},
     {shortcut = 'x', appname = 'WeChat'},
