@@ -427,6 +427,31 @@ end
 -- Needed to enable cycling of application windows
 lastToggledApplication = ''
 
+function toggle_application(_app)
+    -- Finds running applications
+    local app = hs.application.find(_app)
+
+    if not app then
+        --application.launchOrFocus(_app)
+        hs.application.open(_app)
+        return
+    end
+
+    -- application is running, toggle hide/unhide
+    local mainwin = app:mainWindow()
+    if mainwin then
+        if true == app:isFrontmost() then
+            mainwin:application():hide()
+        else
+            mainwin:application():activate(true)
+            mainwin:application():unhide()
+            mainwin:focus()
+        end
+    else
+        hs.application.launchOrFocus(_app)
+    end
+end
+
 function launchOrCycleFocus(applicationName)
   return function()
     local nextWindow = nil
@@ -481,6 +506,9 @@ function activateApp(appname)
 end
 
 resize_win_bindings = {
+    { key = {appmod, '['},  dir = "halfleft", tip = "Lefthalf of Screen" },
+    { key = {appmod, ']'}, dir = "halfright", tip = "Righthalf of Screen" },
+    { key = {appmod, 'tab'},     dir = "maximize", tip = "Maximize Window" },
     { key = {mod0, "left"},  dir = "halfleft", tip = "Lefthalf of Screen" },
     { key = {mod0, "right"}, dir = "halfright", tip = "Righthalf of Screen" },
     { key = {mod0, "up"},    dir = "halfup", tip = "Uphalf of Screen" },
@@ -503,19 +531,23 @@ move_win_bindings = {
 }
 
 applist = {
-    {shortcut = 'c', appname = 'Google Chrome'},
+    {shortcut = 'c', appname = 'Visual Studio Code'},
     {shortcut = 'e', appname = 'Microsoft Excel'},
     {shortcut = 'f', appname = 'Finder'},
-    {shortcut = 'i', appname = 'Amazon Chime'},
-    {shortcut = 'j', appname = 'IntelliJ IDEA'},
+    {shortcut = 'g', appname = 'glogg'},
+    {shortcut = 'i', appname = 'iTerm'},
+    {shortcut = 'j', appname = 'Google Chrome'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
     {shortcut = 'r', appname = 'Firefox'},
-    {shortcut = 't', appname = 'iTerm2'},
+    {shortcut = 's', appname = 'Sublime Text'},
+    {shortcut = 't', appname = 'Terminal'},
     {shortcut = 'w', appname = 'Microsoft Word'},
     {shortcut = 'x', appname = 'WeChat'},
 }
+
+hs.hotkey.bind(appmod, ';', "toggle Terminal", function() toggle_application('Terminal') end)
 
 hs.fnutils.each(resize_win_bindings, function(item)
     hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() resize_win(item.dir) end)
@@ -535,15 +567,15 @@ if not module_list then
         "widgets/netspeed",
         "widgets/calendar",
         "widgets/hcalendar",
-        "widgets/analogclock",
-        "widgets/timelapsed",
+        -- "widgets/analogclock",
+        -- "widgets/timelapsed",
         "widgets/aria2",
         "modes/basicmode",
         "modes/indicator",
         "modes/clipshow",
         "modes/cheatsheet",
         "modes/hsearch",
-        "misc/bingdaily",
+        -- "misc/bingdaily",
     }
 end
 
