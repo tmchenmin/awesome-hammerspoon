@@ -540,7 +540,7 @@ applist = {
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
-    {shortcut = 'r', appname = 'Firefox'},
+    --{shortcut = 'r', appname = 'Firefox'},
     {shortcut = 's', appname = 'Sublime Text'},
     {shortcut = 't', appname = 'Terminal'},
     {shortcut = 'w', appname = 'Microsoft Word'},
