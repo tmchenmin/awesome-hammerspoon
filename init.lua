@@ -532,15 +532,15 @@ move_win_bindings = {
 
 applist = {
     {shortcut = 'c', appname = 'Visual Studio Code'},
-    {shortcut = 'e', appname = 'Microsoft Excel'},
-    {shortcut = 'f', appname = 'Finder'},
+    {shortcut = 'e', appname = 'Emacs'},
+    -- {shortcut = 'f', appname = 'Finder'},
     {shortcut = 'g', appname = 'glogg'},
     {shortcut = 'i', appname = 'iTerm'},
     {shortcut = 'j', appname = 'Google Chrome'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
-    --{shortcut = 'r', appname = 'Firefox'},
+    {shortcut = 'f', appname = 'Firefox'},
     {shortcut = 's', appname = 'Sublime Text'},
     {shortcut = 't', appname = 'Terminal'},
     {shortcut = 'w', appname = 'Microsoft Word'},
