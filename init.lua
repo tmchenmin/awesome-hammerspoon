@@ -543,7 +543,7 @@ applist = {
     {shortcut = 'f', appname = 'Firefox'},
     {shortcut = 's', appname = 'Sublime Text'},
     {shortcut = 't', appname = 'Terminal'},
-    {shortcut = 'w', appname = 'Microsoft Word'},
+    -- {shortcut = 'w', appname = 'Microsoft Word'},
     {shortcut = 'x', appname = 'WeChat'},
 }
 
