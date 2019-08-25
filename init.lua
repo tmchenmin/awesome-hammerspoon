@@ -563,8 +563,8 @@ end)
 
 if not module_list then
     module_list = {
-        "widgets/caffeine",
-        "widgets/netspeed",
+        -- "widgets/caffeine",
+        -- "widgets/netspeed",
         "widgets/calendar",
         "widgets/hcalendar",
         -- "widgets/analogclock",
