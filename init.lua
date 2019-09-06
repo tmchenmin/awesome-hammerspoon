@@ -537,6 +537,7 @@ applist = {
     {shortcut = 'g', appname = 'glogg'},
     {shortcut = 'i', appname = 'iTerm'},
     {shortcut = 'j', appname = 'Google Chrome'},
+    {shortcut = 'l', appname = 'Lark'},
     {shortcut = 'm', appname = 'NeteaseMusic'},
     {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
