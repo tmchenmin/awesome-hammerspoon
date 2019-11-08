@@ -549,6 +549,15 @@ applist = {
     {shortcut = 'x', appname = 'WeChat'},
 }
 
+hs.hotkey.bind(
+    hyper, ".",
+    function()
+        hs.alert.show(string.format("App path:        %s\nApp name:      %s\nIM source id:  %s",
+                                    hs.window.focusedWindow():application():path(),
+                                    hs.window.focusedWindow():application():name(),
+                                    hs.keycodes.currentSourceID()))
+    end)
+
 hs.hotkey.bind(appmod, ';', "toggle Terminal", function() toggle_application('Terminal') end)
 
 hs.fnutils.each(resize_win_bindings, function(item)
@@ -568,6 +577,7 @@ if not module_list then
         -- "widgets/caffeine",
         -- "widgets/netspeed",
         "widgets/calendar",
+        "widgets/clipboard",
         "widgets/hcalendar",
         -- "widgets/analogclock",
         -- "widgets/timelapsed",
