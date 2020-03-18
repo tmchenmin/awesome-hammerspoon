@@ -1,4 +1,4 @@
-modalmgr_keys = modalmgr_keys or {{"alt"}, "space"}
+modalmgr_keys = modalmgr_keys or {{"alt", "shift"}, "space"}
 modalmgr = hs.hotkey.modal.new(modalmgr_keys[1], modalmgr_keys[2], 'Enter Main Mode')
 local modalpkg = {}
 modalpkg.id = "mainM"
