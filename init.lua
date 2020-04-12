@@ -452,6 +452,34 @@ function toggle_application(_app)
     end
 end
 
+local function focus_other_screen() -- focuses the other screen 
+   local screen = hs.mouse.getCurrentScreen()
+   local nextScreen = screen:next()
+   local rect = nextScreen:fullFrame()
+   local center = hs.geometry.rectMidPoint(rect)
+   hs.mouse.setAbsolutePosition(center)
+end 
+
+function get_window_under_mouse() -- from https://gist.github.com/kizzx2/e542fa74b80b7563045a 
+   local my_pos = hs.geometry.new(hs.mouse.getAbsolutePosition())
+   local my_screen = hs.mouse.getCurrentScreen()
+   return hs.fnutils.find(hs.window.orderedWindows(), function(w)
+                 return my_screen == w:screen() and my_pos:inside(w:frame())
+   end)
+end
+
+function activate_other_screen()
+   focus_other_screen() 
+   local win = get_window_under_mouse() 
+   -- now activate that window 
+   win:focus() 
+end 
+
+-- hs.hotkey.bind({"cmd", "shift"}, "1", function() -- does the keybinding
+hs.hotkey.bind({"cmd", "ctrl"}, "o", function() -- does the keybinding
+      activate_other_screen()
+end)
+
 function launchOrCycleFocus(applicationName)
   return function()
     local nextWindow = nil
@@ -537,13 +565,13 @@ applist = {
     {shortcut = 'c', appname = 'Visual Studio Code'},
     {shortcut = 'e', appname = 'Emacs'},
     -- {shortcut = 'f', appname = 'Finder'},
-    {shortcut = 'g', appname = 'glogg'},
+    {shortcut = 'g', appname = 'klogg'},
     {shortcut = 'i', appname = 'iTerm'},
     {shortcut = 'j', appname = 'Google Chrome'},
     {shortcut = 'k', appname = 'kitty'},
     {shortcut = 'l', appname = 'Lark'},
     {shortcut = 'm', appname = 'MWeb'},
-    {shortcut = 'o', appname = 'Microsoft Outlook'},
+    -- {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
     {shortcut = 'f', appname = 'Firefox'},
     {shortcut = 's', appname = 'Sublime Text'},
