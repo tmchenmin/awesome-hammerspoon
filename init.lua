@@ -524,10 +524,13 @@ resize_win_bindings = {
 
 move_win_bindings = {
     { key = {mod0, "n"}, dir = "next", tip = "Move to next screen" },
+    { key = {appmod, "n"}, dir = "next", tip = "Move to next screen" },
     { key = {mod0, "1"}, dir = "first", tip = "Move to first screen" },
+    { key = {appmod, "1"}, dir = "first", tip = "Move to first screen" },
     { key = {mod0, "2"}, dir = "second", tip = "Move to second screen" },
+    { key = {appmod, "2"}, dir = "second", tip = "Move to second screen" },
     { key = {mod0, "3"}, dir = "third", tip = "Move to third screen" },
-    { key = {mod0, "4"}, dir = "fourth", tip = "Move to fourth screen" },
+    { key = {appmod, "3"}, dir = "third", tip = "Move to third screen" },
 }
 
 applist = {
