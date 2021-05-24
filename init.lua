@@ -569,16 +569,25 @@ applist = {
     {shortcut = 'i', appname = 'iTerm'},
     {shortcut = 'j', appname = 'Google Chrome'},
     {shortcut = 'k', appname = 'kitty'},
-    {shortcut = 'l', appname = 'Lark'},
+    {shortcut = 'l', appname = 'klogg'},
     {shortcut = 'm', appname = 'MWeb'},
     -- {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
-    {shortcut = 'f', appname = 'Firefox'},
+    {shortcut = 'f', appname = 'Lark'},
     {shortcut = 's', appname = 'Sublime Text'},
     {shortcut = 't', appname = 'Terminal'},
     -- {shortcut = 'w', appname = 'Microsoft Word'},
     {shortcut = 'x', appname = 'WeChat'},
 }
+
+hs.hotkey.bind(hyper, '`', function()
+    local screen = hs.mouse.getCurrentScreen()
+    local nextScreen = screen:next()
+    local rect = nextScreen:fullFrame()
+    local center = hs.geometry.rectMidPoint(rect)
+ 
+    hs.mouse.setAbsolutePosition(center)
+end)
 
 hs.hotkey.bind(
     hyper, ".",
