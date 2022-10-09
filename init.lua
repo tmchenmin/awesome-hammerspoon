@@ -564,7 +564,7 @@ move_win_bindings = {
 
 applist = {
     {shortcut = 'c', appname = 'Visual Studio Code'},
-    {shortcut = 'e', appname = 'Emacs'},
+    {shortcut = 'e', appname = 'Eudic'},
     -- {shortcut = 'f', appname = 'Finder'},
     {shortcut = 'g', appname = 'klogg'},
     {shortcut = 'i', appname = 'iTerm'},
