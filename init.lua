@@ -592,9 +592,10 @@ end)
 hs.hotkey.bind(mod1, ']', function()
   local desktopInput1_typec = 27
   local desktopInput2_hdmi = 17
+  local desktopInput2_typec = 27
   local binary = "/usr/local/bin/ddcctl"
   hs.execute(binary .. " -d 1 -i " .. desktopInput1_typec)
-  hs.execute(binary .. " -d 2 -i " .. desktopInput2_hdmi)
+  hs.execute(binary .. " -d 2 -i " .. desktopInput2_typec)
 end)
 
 hs.hotkey.bind(hyper, '`', function()
