@@ -616,7 +616,25 @@ hs.hotkey.bind(
                                     hs.keycodes.currentSourceID()))
     end)
 
-hs.hotkey.bind(appmod, ';', "toggle Terminal", function() toggle_application('Terminal') end)
+hs.hotkey.bind(appmod, ';', "toggle Terminal", function() toggle_application('Kitty') end)
+
+-- Alt + ] = Next song
+hs.hotkey.bind({"alt"}, "]", function()
+  hs.eventtap.event.newSystemKeyEvent('NEXT', true):post()
+  hs.eventtap.event.newSystemKeyEvent('NEXT', false):post()
+end)
+
+-- Alt + [ = Prev song
+hs.hotkey.bind({"alt"}, "[", function()
+  hs.eventtap.event.newSystemKeyEvent('PREVIOUS', true):post()
+  hs.eventtap.event.newSystemKeyEvent('PREVIOUS', false):post()
+end)
+
+-- Alt + \ = Play / Pause
+hs.hotkey.bind({"alt"}, "\\", function()
+  hs.eventtap.event.newSystemKeyEvent('PLAY', true):post()
+  hs.eventtap.event.newSystemKeyEvent('PLAY', false):post()
+end)
 
 hs.fnutils.each(resize_win_bindings, function(item)
     hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() resize_win(item.dir) end)
