@@ -636,6 +636,11 @@ hs.hotkey.bind({"alt"}, "\\", function()
   hs.eventtap.event.newSystemKeyEvent('PLAY', false):post()
 end)
 
+hs.hotkey.bind(appmod, "space", function()
+  hs.eventtap.event.newSystemKeyEvent('PLAY', true):post()
+  hs.eventtap.event.newSystemKeyEvent('PLAY', false):post()
+end)
+
 hs.fnutils.each(resize_win_bindings, function(item)
     hs.hotkey.bind(item.key[1], item.key[2], item.tip, function() resize_win(item.dir) end)
 end)
