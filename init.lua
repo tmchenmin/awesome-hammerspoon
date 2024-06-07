@@ -581,22 +581,23 @@ applist = {
     {shortcut = 'x', appname = 'WeChat'},
 }
 
-hs.hotkey.bind(mod1, '[', function()
-  local desktopInput1_dp = 15
-  local desktopInput2_dp = 15
-  local binary = "/usr/local/bin/ddcctl"
-  hs.execute(binary .. " -d 1 -i " .. desktopInput1_dp)
-  hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
-end)
+-- hs.hotkey.bind(mod1, '[', function()
+  -- local desktopInput1_dp = 15
+  -- local desktopInput2_dp = 15
+  -- local binary = "/usr/local/bin/ddcctl"
+  -- local binary = os.execute("command -v ddcctl")
+  -- hs.execute(binary .. " -d 1 -i " .. desktopInput1_dp)
+  -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
+-- end)
 
-hs.hotkey.bind(mod1, ']', function()
-  local desktopInput1_typec = 27
-  local desktopInput2_hdmi = 17
-  local desktopInput2_typec = 27
-  local binary = "/usr/local/bin/ddcctl"
-  hs.execute(binary .. " -d 1 -i " .. desktopInput1_typec)
-  hs.execute(binary .. " -d 2 -i " .. desktopInput2_typec)
-end)
+-- hs.hotkey.bind(mod1, ']', function()
+  -- local desktopInput1_typec = 27
+  -- local desktopInput2_hdmi = 17
+  -- local desktopInput2_typec = 27
+  -- local binary = "/usr/local/bin/ddcctl"
+  -- hs.execute(binary .. " -d 1 -i " .. desktopInput1_typec)
+  -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_typec)
+-- end)
 
 hs.hotkey.bind(hyper, '`', function()
     local screen = hs.mouse.getCurrentScreen()
