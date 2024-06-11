@@ -23,7 +23,7 @@ darkblue = {red=24/255,blue=195/255,green=145/255,alpha=1}
 gray = {red=246/255,blue=246/255,green=246/255,alpha=0.3}
 
 mod0 =   {"cmd", "ctrl", "shift"}
-mod1 =   {"ctrl", "alt"}
+mod1 =   {"cmd", "shift"}
 appmod = {"cmd", "ctrl"}
 
 privatepath = hs.fs.pathToAbsolute(hs.configdir..'/private')
@@ -581,7 +581,7 @@ applist = {
     {shortcut = 'x', appname = 'WeChat'},
 }
 
-hs.hotkey.bind(mod0, '1', function()
+hs.hotkey.bind(mod1, '1', function()
   local desktopInput1_dp = 15
   -- local desktopInput2_dp = 15
   -- local binary = os.execute("command -v ddccli")
@@ -590,7 +590,7 @@ hs.hotkey.bind(mod0, '1', function()
   -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
 end)
 
-hs.hotkey.bind(mod0, '2', function()
+hs.hotkey.bind(mod1, '2', function()
   local desktopInput1_typeC = 27
   -- local desktopInput2_dp = 15
   local binary = "/usr/local/bin/ddccli"
