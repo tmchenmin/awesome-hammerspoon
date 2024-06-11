@@ -554,11 +554,11 @@ resize_win_bindings = {
 move_win_bindings = {
     { key = {mod0, "n"}, dir = "next", tip = "Move to next screen" },
     { key = {appmod, "n"}, dir = "next", tip = "Move to next screen" },
-    { key = {mod0, "1"}, dir = "first", tip = "Move to first screen" },
+    -- { key = {mod0, "1"}, dir = "first", tip = "Move to first screen" },
     { key = {appmod, "1"}, dir = "first", tip = "Move to first screen" },
-    { key = {mod0, "2"}, dir = "second", tip = "Move to second screen" },
+    -- { key = {mod0, "2"}, dir = "second", tip = "Move to second screen" },
     { key = {appmod, "2"}, dir = "second", tip = "Move to second screen" },
-    { key = {mod0, "3"}, dir = "third", tip = "Move to third screen" },
+    -- { key = {mod0, "3"}, dir = "third", tip = "Move to third screen" },
     { key = {appmod, "3"}, dir = "third", tip = "Move to third screen" },
 }
 
@@ -581,11 +581,26 @@ applist = {
     {shortcut = 'x', appname = 'WeChat'},
 }
 
+hs.hotkey.bind(mod0, '1', function()
+  local desktopInput1_dp = 15
+  -- local desktopInput2_dp = 15
+  -- local binary = os.execute("command -v ddccli")
+  local binary = "/usr/local/bin/ddccli"
+  hs.execute(binary .. " set -d 0 --vcp 96 --value " .. desktopInput1_dp)
+  -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
+end)
+
+hs.hotkey.bind(mod0, '2', function()
+  local desktopInput1_typeC = 27
+  -- local desktopInput2_dp = 15
+  local binary = "/usr/local/bin/ddccli"
+  hs.execute(binary .. " set -d 0 --vcp 96 --value " .. desktopInput1_typeC)
+  -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
+end)
 -- hs.hotkey.bind(mod1, '[', function()
   -- local desktopInput1_dp = 15
   -- local desktopInput2_dp = 15
   -- local binary = "/usr/local/bin/ddcctl"
-  -- local binary = os.execute("command -v ddcctl")
   -- hs.execute(binary .. " -d 1 -i " .. desktopInput1_dp)
   -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
 -- end)
