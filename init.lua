@@ -587,6 +587,7 @@ hs.hotkey.bind(mod1, '1', function()
   -- local binary = os.execute("command -v ddccli")
   local binary = "/usr/local/bin/ddccli"
   hs.execute(binary .. " set -d 0 --vcp 96 --value " .. desktopInput1_dp)
+  hs.execute(binary .. " set -d 1 --vcp 96 --value " .. desktopInput1_dp)
   -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
 end)
 
@@ -595,6 +596,7 @@ hs.hotkey.bind(mod1, '2', function()
   -- local desktopInput2_dp = 15
   local binary = "/usr/local/bin/ddccli"
   hs.execute(binary .. " set -d 0 --vcp 96 --value " .. desktopInput1_typeC)
+  hs.execute(binary .. " set -d 1 --vcp 96 --value " .. desktopInput1_typeC)
   -- hs.execute(binary .. " -d 2 -i " .. desktopInput2_dp)
 end)
 -- hs.hotkey.bind(mod1, '[', function()
