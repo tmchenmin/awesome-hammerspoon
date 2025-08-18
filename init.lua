@@ -481,6 +481,29 @@ hs.hotkey.bind({"cmd", "ctrl"}, "o", function() -- does the keybinding
       activate_other_screen()
 end)
 
+-- 定义一个函数：把鼠标移动到当前活跃窗口所在屏幕的中心
+function moveMouseToActiveWindowScreen()
+    -- 获取当前聚焦的窗口
+    local win = hs.window.focusedWindow()
+    if not win then
+        hs.alert.show("没有找到活跃窗口")
+        return
+    end
+
+    -- 获取窗口所在的屏幕
+    local screen = win:screen()
+    local frame = screen:frame()
+
+    -- 把鼠标移动到该屏幕的中心
+    local center = hs.geometry.point(frame.x + frame.w/2, frame.y + frame.h/2)
+    hs.mouse.setAbsolutePosition(center)
+end
+
+-- 设置快捷键，例如 Ctrl+Alt+Cmd + M
+hs.hotkey.bind({"cmd", "ctrl"}, "m", function() -- does the keybinding
+      moveMouseToActiveWindowScreen()
+end)
+
 function launchOrCycleFocus(applicationName)
   return function()
     local nextWindow = nil
@@ -571,7 +594,7 @@ applist = {
     {shortcut = 'j', appname = 'Google Chrome'},
     {shortcut = 'k', appname = 'kitty'},
     {shortcut = 'l', appname = 'klogg'},
-    {shortcut = 'm', appname = 'MWeb'},
+    -- {shortcut = 'm', appname = 'MWeb'},
     -- {shortcut = 'o', appname = 'Microsoft Outlook'},
     {shortcut = 'p', appname = 'Microsoft PowerPoint'},
     {shortcut = 'f', appname = 'Lark'},
